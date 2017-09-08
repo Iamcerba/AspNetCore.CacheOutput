@@ -23,6 +23,7 @@ namespace WebApi.OutputCache
     public class CacheOutputAttribute : ActionFilterAttribute
     {
         private const string CurrentRequestCacheKey = "CacheOutput:CacheKey";
+        private const string CurrentRequestSkipResultExecution = "CacheOutput:SkipResultExecutionKey";
         protected static string DefaultMediaType = "application/json; charset=utf-8";
         internal IModelQuery<DateTime, CacheTime> CacheTimeQuery;
         private int? sharedTimeSpan = null;
@@ -115,6 +116,8 @@ namespace WebApi.OutputCache
                     return;
                 }
 
+                context.HttpContext.Items[CurrentRequestSkipResultExecution] = true;
+
                 if (context.HttpContext.Request.Headers[HeaderNames.IfNoneMatch].Any())
                 {
                     string etag = cache.Get<string>(cachekey + Constants.EtagKey);
@@ -169,6 +172,7 @@ namespace WebApi.OutputCache
 
             if (
                 context.HttpContext.Response == null ||
+                context.HttpContext.Items[CurrentRequestSkipResultExecution] != null ||
                 !(
                     context.HttpContext.Response.StatusCode >= (int)HttpStatusCode.OK &&
                     context.HttpContext.Response.StatusCode < (int)HttpStatusCode.Ambiguous
