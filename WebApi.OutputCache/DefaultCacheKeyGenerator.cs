@@ -110,7 +110,7 @@ namespace WebApi.OutputCache
             if (val is IEnumerable && !(val is string))
             {
                 string concatValue = string.Empty;
-                IEnumerable paramArray = val as IEnumerable;
+                var paramArray = val as IEnumerable;
 
                 return paramArray.Cast<object>().Aggregate(concatValue, (current, paramValue) => current + (paramValue + ";"));
             }

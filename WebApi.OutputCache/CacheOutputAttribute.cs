@@ -80,11 +80,6 @@ namespace WebApi.OutputCache
         /// </summary>
         public bool Private { get; set; }
 
-        /// <summary>
-        /// Class used to generate caching keys.
-        /// </summary>
-        public Type CacheKeyGenerator { get; set; }
-
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (context == null)
@@ -104,10 +99,10 @@ namespace WebApi.OutputCache
 
             if (!IsCachingAllowed(context, AnonymousOnly))
             {
+                await next();
+
                 return;
             }
-
-            EnsureCacheTimeQuery();
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IApiOutputCache cache = serviceProvider.GetService(typeof(IApiOutputCache)) as IApiOutputCache;
@@ -115,6 +110,8 @@ namespace WebApi.OutputCache
 
             if (cache != null && cacheKeyGenerator != null)
             {
+                EnsureCacheTimeQuery();
+
                 string expectedMediaType = GetExpectedMediaType(context);
 
                 string cachekey = cacheKeyGenerator.MakeCacheKey(context, expectedMediaType, ExcludeQueryStringFromCacheKey);
@@ -153,6 +150,8 @@ namespace WebApi.OutputCache
 
                 if (val == null)
                 {
+                    await next();
+
                     return;
                 }
 
@@ -175,6 +174,10 @@ namespace WebApi.OutputCache
                 CacheTime cacheTime = CacheTimeQuery.Execute(DateTime.Now);
 
                 ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
+            }
+            else
+            {
+                await next();
             }
         }
 

@@ -13,22 +13,22 @@ namespace WebApi.OutputCache.Redis
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public sealed class InvalidateCacheOutputAttribute : ActionFilterAttribute
     {
-        private string controllerName;
+        private readonly string controller;
         private readonly string methodName;
         private readonly string[] actionParameters;
 
-        public InvalidateCacheOutputAttribute(string methodName) : this(methodName, null)
+        public InvalidateCacheOutputAttribute(string methodName): this(methodName, null)
         {
         }
 
         public InvalidateCacheOutputAttribute(
             string methodName,
-            string controllerName,
+            Type controllerType,
             params string[] actionParameters
         )
         {
+            this.controller = controllerType != null ? controllerType.FullName : null;
             this.methodName = methodName;
-            this.controllerName = controllerName;
             this.actionParameters = actionParameters;
         }
 
@@ -47,16 +47,16 @@ namespace WebApi.OutputCache.Redis
                 return;
             }
 
-            this.controllerName = this.controllerName ??
-                (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerTypeInfo.FullName;
-
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IApiOutputCache cache = serviceProvider.GetService(typeof(IApiOutputCache)) as IApiOutputCache;
             ICacheKeyGenerator cacheKeyGenerator = serviceProvider.GetService(typeof(ICacheKeyGenerator)) as ICacheKeyGenerator;
 
             if (cache != null && cacheKeyGenerator != null)
             {
-                string baseCachekey = cacheKeyGenerator.MakeBaseCachekey(this.controllerName, this.methodName);
+                string controllerName = this.controller ?? 
+                    (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerTypeInfo.FullName;
+
+                string baseCachekey = cacheKeyGenerator.MakeBaseCachekey(controllerName, this.methodName);
 
                 string key = IncludeActionParameters(context, baseCachekey, actionParameters);
 
