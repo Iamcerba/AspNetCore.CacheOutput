@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Jil;
 using StackExchange.Redis;
 
 namespace WebApi.OutputCache.Redis.Extensions
@@ -18,7 +18,7 @@ namespace WebApi.OutputCache.Redis.Extensions
                 return default(T);
             }
 
-            return JsonConvert.DeserializeObject<T>(result.ToString());
+            return JSON.Deserialize<T>(result);
         }
 
         public static async Task<T> GetAsync<T>(this IDatabase cache, string key)
@@ -30,7 +30,7 @@ namespace WebApi.OutputCache.Redis.Extensions
                 return default(T);
             }
 
-            return JsonConvert.DeserializeObject<T>(result.ToString());
+            return JSON.Deserialize<T>(result);
         }
 
         public static object Get(this IDatabase cache, string key)
@@ -42,7 +42,7 @@ namespace WebApi.OutputCache.Redis.Extensions
                 return default(object);
             }
 
-            return JsonConvert.DeserializeObject<object>(result.ToString());
+            return JSON.Deserialize<object>(result);
         }
 
         public static async Task<object> GetAsync(this IDatabase cache, string key)
@@ -54,7 +54,7 @@ namespace WebApi.OutputCache.Redis.Extensions
                 return default(object);
             }
 
-            return JsonConvert.DeserializeObject<object>(result.ToString());
+            return JSON.Deserialize<object>(result);
         }
 
         public static IEnumerable<RedisKey> GetAllKeys(this ConnectionMultiplexer connectionMultiplexer)
@@ -107,12 +107,12 @@ namespace WebApi.OutputCache.Redis.Extensions
 
         public static bool Set(this IDatabase cache, string key, object value, TimeSpan? expiry = null)
         {
-            return cache.StringSet(key, JsonConvert.SerializeObject(value), expiry);
+            return cache.StringSet(key, JSON.Serialize(value), expiry);
         }
 
         public static Task<bool> SetAsync(this IDatabase cache, string key, object value, TimeSpan? expiry = null)
         {
-            return cache.StringSetAsync(key, JsonConvert.SerializeObject(value), expiry);
+            return cache.StringSetAsync(key, JSON.Serialize(value), expiry);
         }
     }
 }
