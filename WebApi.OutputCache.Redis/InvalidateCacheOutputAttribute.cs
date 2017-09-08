@@ -60,7 +60,7 @@ namespace WebApi.OutputCache.Redis
 
                 string key = IncludeActionParameters(context, baseCachekey, actionParameters);
 
-                cache.RemoveStartsWith(key);
+                await cache.RemoveStartsWithAsync(key);
             }
         }
 

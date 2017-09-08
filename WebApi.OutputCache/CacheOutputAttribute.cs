@@ -85,11 +85,21 @@ namespace WebApi.OutputCache
         /// </summary>
         public Type CacheKeyGenerator { get; set; }
 
-        public override void OnActionExecuting(ActionExecutingContext context)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
+            }
+
+            if (next == null)
+            {
+                throw new ArgumentNullException(nameof(next));
+            }
+                
+            if (context.Result != null)
+            {
+                return;
             }
 
             if (!IsCachingAllowed(context, AnonymousOnly))
@@ -111,8 +121,10 @@ namespace WebApi.OutputCache
 
                 context.HttpContext.Items[CurrentRequestCacheKey] = cachekey;
 
-                if (!cache.Contains(cachekey))
+                if (!await cache.ContainsAsync(cachekey))
                 {
+                    await next();
+
                     return;
                 }
 
@@ -120,7 +132,7 @@ namespace WebApi.OutputCache
 
                 if (context.HttpContext.Request.Headers[HeaderNames.IfNoneMatch].Any())
                 {
-                    string etag = cache.Get<string>(cachekey + Constants.EtagKey);
+                    string etag = await cache.GetAsync<string>(cachekey + Constants.EtagKey);
 
                     if (etag != null)
                     {
@@ -137,21 +149,21 @@ namespace WebApi.OutputCache
                     }
                 }
 
-                byte[] val = cache.Get<byte[]>(cachekey);
+                byte[] val = await cache.GetAsync<byte[]>(cachekey);
 
                 if (val == null)
                 {
                     return;
                 }
 
-                string responseEtag = cache.Get<string>(cachekey + Constants.EtagKey);
+                string responseEtag = await cache.GetAsync<string>(cachekey + Constants.EtagKey);
 
                 if (responseEtag != null)
                 {
                     SetEtag(context.HttpContext.Response, responseEtag);
                 }
 
-                string contentType = cache.Get<string>(cachekey + Constants.ContentTypeKey) ?? expectedMediaType;
+                string contentType = await cache.GetAsync<string>(cachekey + Constants.ContentTypeKey) ?? expectedMediaType;
 
                 context.Result = new ContentResult()
                 {
@@ -199,7 +211,7 @@ namespace WebApi.OutputCache
                 {
                     string cachekey = context.HttpContext.Items[CurrentRequestCacheKey] as string;
 
-                    if (!string.IsNullOrWhiteSpace(cachekey) && !cache.Contains(cachekey))
+                    if (!string.IsNullOrWhiteSpace(cachekey) && !await cache.ContainsAsync(cachekey))
                     {
                         SetEtag(context.HttpContext.Response, CreateEtag());
 
@@ -219,17 +231,17 @@ namespace WebApi.OutputCache
                             string responseBodyContent = await streamReader.ReadToEndAsync();
                             byte[] responseBodyContentAsBytes = Encoding.UTF8.GetBytes(responseBodyContent);
 
-                            cache.Add(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
-                            cache.Add(cachekey, responseBodyContentAsBytes, cacheTime.AbsoluteExpiration, baseKey);
+                            await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
+                            await cache.AddAsync(cachekey, responseBodyContentAsBytes, cacheTime.AbsoluteExpiration, baseKey);
                         }
 
-                        cache.Add(
+                        await cache.AddAsync(
                             cachekey + Constants.ContentTypeKey,
                             contentType,
                             cacheTime.AbsoluteExpiration, baseKey
                         );
 
-                        cache.Add(
+                        await cache.AddAsync(
                             cachekey + Constants.EtagKey,
                             etag,
                             cacheTime.AbsoluteExpiration, baseKey

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using StackExchange.Redis;
 using WebApi.OutputCache.Core;
 using WebApi.OutputCache.Redis.Extensions;
@@ -17,18 +18,7 @@ namespace WebApi.OutputCache.Redis
             this.redisCache = redisCache;
         }
 
-        public IEnumerable<string> AllKeys
-        {
-            get
-            {
-                foreach (string key in redisCache.Multiplexer.GetAllKeys())
-                {
-                    yield return key;
-                }
-            }
-        }
-
-        public void RemoveStartsWith(string key)
+        public async Task RemoveStartsWithAsync(string key)
         {
             if (key.Contains("*"))
             {
@@ -45,26 +35,26 @@ namespace WebApi.OutputCache.Redis
 
                     foreach (RedisKey memberKey in keys)
                     {
-                        Remove(memberKey);
+                        await RemoveAsync(memberKey);
                     }
                 }
             }
             else
             {
-                RedisValue[] keys = redisCache.SetMembers(key);
+                RedisValue[] keys = await redisCache.SetMembersAsync(key);
 
                 foreach (var memberKey in keys)
                 {
-                    Remove(memberKey);
+                    await RemoveAsync(memberKey);
                 }
 
-                Remove(key);
+                await RemoveAsync(key);
             }
         }
 
-        public T Get<T>(string key) where T : class
+        public async Task<T> GetAsync<T>(string key) where T : class
         {
-            T result = redisCache.Get<T>(key);
+            T result = await redisCache.GetAsync<T>(key);
 
             if (typeof(T) == typeof(byte[]))
             {
@@ -75,33 +65,18 @@ namespace WebApi.OutputCache.Redis
             return result;
         }
 
-        public object Get(string key)
+        public Task RemoveAsync(string key)
         {
-            object result = redisCache.Get(key);
-
-            byte[] compressedArray = result as byte[];
-
-            if (compressedArray != null)
-            {
-                // GZip decompression
-                return compressedArray.Decompress();
-            }
-
-            return result;
+            return redisCache.KeyDeleteAsync(key);
         }
 
-        public void Remove(string key)
-        {
-            redisCache.KeyDelete(key);
-        }
-
-        public bool Contains(string key)
+        public async Task<bool> ContainsAsync(string key)
         {
             if (key.Contains("*"))
             {
                 EndPoint[] endPoints = redisCache.Multiplexer.GetEndPoints();
 
-                foreach (var endPoint in endPoints)
+                foreach (EndPoint endPoint in endPoints)
                 {
                     IServer server = redisCache.Multiplexer.GetServer(endPoint);
 
@@ -118,10 +93,10 @@ namespace WebApi.OutputCache.Redis
                 return false;
             }
 
-            return redisCache.KeyExists(key);
+            return await redisCache.KeyExistsAsync(key);
         }
 
-        public void Add(string key, object value, DateTimeOffset expiration, string dependsOnKey = null)
+        public async Task AddAsync(string key, object value, DateTimeOffset expiration, string dependsOnKey = null)
         {
             // Lets not store the base type (will be dependsOnKey later) since we want to use it as a set!
             if (Equals(value, string.Empty))
@@ -137,11 +112,11 @@ namespace WebApi.OutputCache.Redis
                 value = byteArray.Compress();
             }
 
-            bool primaryAdded = redisCache.Set(key, value, expiration.Subtract(DateTimeOffset.Now));
+            bool primaryAdded = await redisCache.SetAsync(key, value, expiration.Subtract(DateTimeOffset.Now));
 
             if (dependsOnKey != null && primaryAdded)
             {
-                redisCache.SetAdd(dependsOnKey, key);
+                await redisCache.SetAddAsync(dependsOnKey, key);
             }
         }
     }

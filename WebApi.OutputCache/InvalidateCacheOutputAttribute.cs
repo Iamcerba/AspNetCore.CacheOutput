@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using WebApi.OutputCache.Core;
@@ -22,9 +23,11 @@ namespace WebApi.OutputCache
             this.controllerName = controllerName;
         }
 
-        public override void OnActionExecuted(ActionExecutedContext context)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (context.Exception != null ||
+            await base.OnActionExecutionAsync(context, next);
+
+            if (
                 context.HttpContext.Response != null &&
                 !(
                     context.HttpContext.Response.StatusCode >= (int)HttpStatusCode.OK && 
@@ -46,7 +49,7 @@ namespace WebApi.OutputCache
             {
                 string baseCachekey = cacheKeyGenerator.MakeBaseCachekey(this.controllerName, this.methodName);
 
-                cache.RemoveStartsWith(baseCachekey);
+                await cache.RemoveStartsWithAsync(baseCachekey);
             }
         }
     }
