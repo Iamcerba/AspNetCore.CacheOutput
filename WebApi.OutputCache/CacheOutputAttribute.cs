@@ -118,13 +118,6 @@ namespace WebApi.OutputCache
 
                 context.HttpContext.Items[CurrentRequestCacheKey] = cachekey;
 
-                if (IsCacheControlNoCacheRequested(context))
-                {
-                    await next();
-
-                    return;
-                }
-
                 if (!await cache.ContainsAsync(cachekey))
                 {
                     await next();
@@ -225,11 +218,6 @@ namespace WebApi.OutputCache
 
                     if (!string.IsNullOrWhiteSpace(cachekey))
                     {
-                        if (IsCacheControlNoCacheRequested(context))
-                        {
-                            await cache.RemoveAsync(cachekey);
-                        }
-
                         if (!await cache.ContainsAsync(cachekey))
                         {
                             SetEtag(context.HttpContext.Response, CreateEtag());
@@ -381,13 +369,6 @@ namespace WebApi.OutputCache
             {
                 response.Headers[HeaderNames.ETag] = @"""" + etag.Replace("\"", string.Empty) + @"""";
             }
-        }
-
-        private bool IsCacheControlNoCacheRequested(ActionContext context)
-        {
-            string cacheControl = context.HttpContext.Request.Headers[HeaderNames.CacheControl].FirstOrDefault();
-
-            return !string.IsNullOrEmpty(cacheControl) && cacheControl.ToLower() == "no-cache";
         }
     }
 }
