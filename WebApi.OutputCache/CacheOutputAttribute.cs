@@ -91,7 +91,7 @@ namespace WebApi.OutputCache
             {
                 throw new ArgumentNullException(nameof(next));
             }
-                
+
             if (context.Result != null)
             {
                 return;
@@ -117,6 +117,13 @@ namespace WebApi.OutputCache
                 string cachekey = cacheKeyGenerator.MakeCacheKey(context, expectedMediaType, ExcludeQueryStringFromCacheKey);
 
                 context.HttpContext.Items[CurrentRequestCacheKey] = cachekey;
+
+                if (IsCacheControlNoCacheRequested(context))
+                {
+                    await next();
+
+                    return;
+                }
 
                 if (!await cache.ContainsAsync(cachekey))
                 {
@@ -214,41 +221,51 @@ namespace WebApi.OutputCache
                 {
                     string cachekey = context.HttpContext.Items[CurrentRequestCacheKey] as string;
 
-                    if (!string.IsNullOrWhiteSpace(cachekey) && !await cache.ContainsAsync(cachekey))
+                    if (!string.IsNullOrWhiteSpace(cachekey))
                     {
-                        SetEtag(context.HttpContext.Response, CreateEtag());
-
-                        context.HttpContext.Response.Headers.Remove(HeaderNames.ContentLength);
-
-                        var actionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
-                        string controller = actionDescriptor?.ControllerTypeInfo.FullName;
-                        string action = actionDescriptor?.ActionName;
-                        string baseKey = cacheKeyGenerator.MakeBaseCachekey(controller, action);
-                        string contentType = context.HttpContext.Response.ContentType;
-                        string etag = context.HttpContext.Response.Headers[HeaderNames.ETag];
-
-                        context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-
-                        using (var streamReader = new StreamReader(context.HttpContext.Response.Body, Encoding.UTF8, true, 512, true))
+                        if (IsCacheControlNoCacheRequested(context))
                         {
-                            string responseBodyContent = await streamReader.ReadToEndAsync();
-                            byte[] responseBodyContentAsBytes = Encoding.UTF8.GetBytes(responseBodyContent);
-
-                            await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
-                            await cache.AddAsync(cachekey, responseBodyContentAsBytes, cacheTime.AbsoluteExpiration, baseKey);
+                            await cache.RemoveAsync(cachekey);
                         }
 
-                        await cache.AddAsync(
-                            cachekey + Constants.ContentTypeKey,
-                            contentType,
-                            cacheTime.AbsoluteExpiration, baseKey
-                        );
+                        if (!await cache.ContainsAsync(cachekey))
+                        {
+                            SetEtag(context.HttpContext.Response, CreateEtag());
 
-                        await cache.AddAsync(
-                            cachekey + Constants.EtagKey,
-                            etag,
-                            cacheTime.AbsoluteExpiration, baseKey
-                        );
+                            context.HttpContext.Response.Headers.Remove(HeaderNames.ContentLength);
+
+                            var actionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+                            string controller = actionDescriptor?.ControllerTypeInfo.FullName;
+                            string action = actionDescriptor?.ActionName;
+                            string baseKey = cacheKeyGenerator.MakeBaseCachekey(controller, action);
+                            string contentType = context.HttpContext.Response.ContentType;
+                            string etag = context.HttpContext.Response.Headers[HeaderNames.ETag];
+
+                            context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+
+                            using (var streamReader = new StreamReader(context.HttpContext.Response.Body, Encoding.UTF8, true, 512, true))
+                            {
+                                string responseBodyContent = await streamReader.ReadToEndAsync();
+                                byte[] responseBodyContentAsBytes = Encoding.UTF8.GetBytes(responseBodyContent);
+
+                                await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
+                                await cache.AddAsync(cachekey, responseBodyContentAsBytes, cacheTime.AbsoluteExpiration, baseKey);
+                            }
+
+                            await cache.AddAsync(
+                                cachekey + Constants.ContentTypeKey,
+                                contentType,
+                                cacheTime.AbsoluteExpiration,
+                                baseKey
+                            );
+
+                            await cache.AddAsync(
+                                cachekey + Constants.EtagKey,
+                                etag,
+                                cacheTime.AbsoluteExpiration,
+                                baseKey
+                            );
+                        }
                     }
                 }
             }
@@ -316,7 +333,7 @@ namespace WebApi.OutputCache
                     }
                 }
             }
-            
+
             return DefaultMediaType;
         }
 
@@ -350,6 +367,13 @@ namespace WebApi.OutputCache
             {
                 response.Headers[HeaderNames.ETag] = @"""" + etag.Replace("\"", string.Empty) + @"""";
             }
+        }
+
+        private bool IsCacheControlNoCacheRequested(ActionContext context)
+        {
+            string cacheControl = context.HttpContext.Request.Headers[HeaderNames.CacheControl].FirstOrDefault();
+
+            return !string.IsNullOrEmpty(cacheControl) && cacheControl.ToLower() == "no-cache";
         }
     }
 }
