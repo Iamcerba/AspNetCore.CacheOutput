@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Primitives;
 using WebApi.OutputCache.Core;
 
 namespace WebApi.OutputCache.InMemory
@@ -8,10 +10,11 @@ namespace WebApi.OutputCache.InMemory
     public class InMemoryOutputCacheProvider : IApiOutputCache
     {
         private static readonly MemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
+        private const string CancellationTokenKey = ":cts";
 
-        public async Task RemoveStartsWithAsync(string key)
+        public Task RemoveStartsWithAsync(string key)
         {
-            Cache.Remove(key);
+            return RemoveAsync(key);
         }
 
         public async Task<T> GetAsync<T>(string key) where T : class
@@ -21,7 +24,14 @@ namespace WebApi.OutputCache.InMemory
 
         public async Task RemoveAsync(string key)
         {
-            Cache.Remove(key);
+            if (Cache.TryGetValue($"{key}{CancellationTokenKey}", out CancellationTokenSource cts))
+            {
+                cts.Cancel();
+            }
+            else
+            {
+                Cache.Remove(key);
+            }
         }
 
         public async Task<bool> ContainsAsync(string key)
@@ -29,9 +39,28 @@ namespace WebApi.OutputCache.InMemory
             return Cache.TryGetValue(key, out object result);
         }
 
-        public Task AddAsync(string key, object o, DateTimeOffset expiration, string dependsOnKey = null)
+        public async Task AddAsync(string key, object value, DateTimeOffset expiration, string dependsOnKey = null)
         {
-            throw new NotImplementedException();
+            var options = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(expiration.Subtract(DateTimeOffset.Now));
+
+            if (string.IsNullOrEmpty(dependsOnKey))
+            {
+                var cts = new CancellationTokenSource();
+
+                options.AddExpirationToken(new CancellationChangeToken(cts.Token));
+
+                Cache.Set(key, value, options);
+
+                Cache.Set($"{key}{CancellationTokenKey}", cts, options);
+            }
+            else
+            {
+                if (Cache.TryGetValue($"{dependsOnKey}{CancellationTokenKey}", out CancellationTokenSource existingCts))
+                {
+                    Cache.Set(key, value, new CancellationChangeToken(existingCts.Token));
+                }
+            }
         }
     }
 }

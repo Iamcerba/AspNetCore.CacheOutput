@@ -1,12 +1,10 @@
-﻿using System.IO;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
 using WebApi.OutputCache.Core;
 using WebApi.OutputCache.Extensions;
-using WebApi.OutputCache.Redis;
+using WebApi.OutputCache.InMemory;
 
 namespace WebApi.OutputCache.Demo
 {
@@ -23,8 +21,7 @@ namespace WebApi.OutputCache.Demo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>();
-            services.AddSingleton<IApiOutputCache, StackExchangeRedisOutputCacheProvider>();
-            services.AddSingleton<IDatabase>(e => ConnectionMultiplexer.Connect("localhost:6379,allowAdmin=true").GetDatabase());
+            services.AddSingleton<IApiOutputCache, InMemoryOutputCacheProvider>();
 
             services.AddMvc();
         }

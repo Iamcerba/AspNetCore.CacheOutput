@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebApi.OutputCache.Core\WebApi.OutputCache.Core.csproj" />
+    <ProjectReference Include="..\WebApi.OutputCache.InMemory\WebApi.OutputCache.InMemory.csproj" />
     <ProjectReference Include="..\WebApi.OutputCache.Redis\WebApi.OutputCache.Redis.csproj" />
     <ProjectReference Include="..\WebApi.OutputCache\WebApi.OutputCache.csproj" />
   </ItemGroup>

@@ -13,6 +13,6 @@ namespace WebApi.OutputCache.Core
 
         Task<bool> ContainsAsync(string key);
 
-        Task AddAsync(string key, object o, DateTimeOffset expiration, string dependsOnKey = null);
+        Task AddAsync(string key, object value, DateTimeOffset expiration, string dependsOnKey = null);
     }
 }
