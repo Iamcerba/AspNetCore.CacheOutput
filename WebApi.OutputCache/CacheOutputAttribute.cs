@@ -170,6 +170,7 @@ namespace WebApi.OutputCache
                 }
 
                 string contentType = await cache.GetAsync<string>(cachekey + Constants.ContentTypeKey) ?? expectedMediaType;
+                DateTimeOffset lastModified = DateTimeOffset.Parse(await cache.GetAsync<string>(cachekey + Constants.LastModifiedKey));
 
                 context.Result = new ContentResult()
                 {
@@ -180,7 +181,7 @@ namespace WebApi.OutputCache
 
                 CacheTime cacheTime = CacheTimeQuery.Execute(DateTime.Now);
 
-                ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
+                ApplyCacheHeaders(context.HttpContext.Response, cacheTime, lastModified);
             }
             else
             {
@@ -209,9 +210,10 @@ namespace WebApi.OutputCache
                 return;
             }
 
-            CacheTime cacheTime = CacheTimeQuery.Execute(DateTime.Now);
+            DateTimeOffset actionExecutionTimestamp = DateTimeOffset.Now;
+            CacheTime cacheTime = CacheTimeQuery.Execute(actionExecutionTimestamp.DateTime);
 
-            if (cacheTime.AbsoluteExpiration > DateTime.Now)
+            if (cacheTime.AbsoluteExpiration > actionExecutionTimestamp)
             {
                 IServiceProvider serviceProvider = context.HttpContext.RequestServices;
                 IApiOutputCache cache = serviceProvider.GetService(typeof(IApiOutputCache)) as IApiOutputCache;
@@ -265,12 +267,19 @@ namespace WebApi.OutputCache
                                 cacheTime.AbsoluteExpiration,
                                 baseKey
                             );
+
+                            await cache.AddAsync(
+                                cachekey + Constants.LastModifiedKey,
+                                actionExecutionTimestamp.ToString(),
+                                cacheTime.AbsoluteExpiration,
+                                baseKey
+                            );
                         }
                     }
                 }
             }
 
-            ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
+            ApplyCacheHeaders(context.HttpContext.Response, cacheTime, actionExecutionTimestamp);
         }
 
         protected virtual bool IsCachingAllowed(FilterContext actionContext, bool anonymousOnly)
@@ -337,7 +346,7 @@ namespace WebApi.OutputCache
             return DefaultMediaType;
         }
 
-        protected virtual void ApplyCacheHeaders(HttpResponse response, CacheTime cacheTime)
+        protected virtual void ApplyCacheHeaders(HttpResponse response, CacheTime cacheTime, DateTimeOffset? lastModified = null)
         {
             if (cacheTime.ClientTimeSpan > TimeSpan.Zero || MustRevalidate || Private)
             {
@@ -353,6 +362,11 @@ namespace WebApi.OutputCache
             {
                 response.Headers[HeaderNames.CacheControl] = "no-cache";
                 response.Headers[HeaderNames.Pragma] = "no-cache";
+            }
+
+            if (lastModified.HasValue)
+            {
+                response.Headers[HeaderNames.LastModified] = lastModified.Value.ToString("R");
             }
         }
 
