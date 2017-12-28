@@ -6,11 +6,11 @@ namespace AspNetCore.CacheOutput
 {
     public class CacheOutputMiddleware
     {
-        protected RequestDelegate next;
+        protected RequestDelegate Next;
 
         public CacheOutputMiddleware(RequestDelegate next)
         {
-            this.next = next;
+            this.Next = next;
         }
 
         public async Task Invoke(HttpContext context)
@@ -20,7 +20,7 @@ namespace AspNetCore.CacheOutput
                 Stream originalResponse = context.Response.Body;
                 context.Response.Body = stream;
 
-                await next.Invoke(context);
+                await Next.Invoke(context);
 
                 stream.Seek(0, SeekOrigin.Begin);
                 await stream.CopyToAsync(originalResponse);
