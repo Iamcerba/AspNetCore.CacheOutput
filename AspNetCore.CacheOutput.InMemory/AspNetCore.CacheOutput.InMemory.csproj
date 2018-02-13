@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Alexander Shabunevich</Authors>
+    <Company />
+    <Copyright>Copyright © 2018 Alexander Shabunevich</Copyright>
+    <PackageLicenseUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
+    <Description>InMemoryOutputCacheProvider for AspNetCore.CacheOutput package</Description>
   </PropertyGroup>
 
   <ItemGroup>
