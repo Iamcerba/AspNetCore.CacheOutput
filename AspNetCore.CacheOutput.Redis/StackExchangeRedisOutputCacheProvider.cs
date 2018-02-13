@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AspNetCore.CacheOutput.Core;
 using AspNetCore.CacheOutput.Redis.Extensions;
 using StackExchange.Redis;
 

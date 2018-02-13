@@ -1,5 +1,4 @@
-﻿using AspNetCore.CacheOutput.Core;
-using AspNetCore.CacheOutput.Extensions;
+﻿using AspNetCore.CacheOutput.Extensions;
 using AspNetCore.CacheOutput.InMemory;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

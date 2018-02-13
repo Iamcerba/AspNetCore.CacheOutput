@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace AspNetCore.CacheOutput.Core
+namespace AspNetCore.CacheOutput
 {
     public interface IApiOutputCache
     {

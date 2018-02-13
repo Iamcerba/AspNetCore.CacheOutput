@@ -11,10 +11,18 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
     <Description>InMemoryOutputCacheProvider for AspNetCore.CacheOutput package</Description>
+    <Version>1.0.1</Version>
+	<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeP2POutput</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AspNetCore.CacheOutput.Core\AspNetCore.CacheOutput.Core.csproj" />
+    <ProjectReference Include="..\AspNetCore.CacheOutput\AspNetCore.CacheOutput.csproj" />
   </ItemGroup>
+  
+  <Target Name="IncludeP2POutput">
+    <ItemGroup>
+      <BuildOutputInPackage Include="$(OutputPath)AspNetCore.CacheOutput.dll" />
+    </ItemGroup>
+  </Target>
 
 </Project>

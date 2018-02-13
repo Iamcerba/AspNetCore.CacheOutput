@@ -1,4 +1,4 @@
-﻿namespace AspNetCore.CacheOutput.Core
+﻿namespace AspNetCore.CacheOutput
 {
     public interface IModelQuery<in TModel, out TResult>
     {

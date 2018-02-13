@@ -1,15 +1,17 @@
 ﻿using System;
 
-namespace AspNetCore.CacheOutput.Core.Time
+namespace AspNetCore.CacheOutput.Time
 {
-    public class ThisDay : IModelQuery<DateTime, CacheTime>
+    public class ThisMonth : IModelQuery<DateTime, CacheTime>
     {
+        private readonly int day;
         private readonly int hour;
         private readonly int minute;
         private readonly int second;
 
-        public ThisDay(int hour, int minute, int second)
+        public ThisMonth(int day, int hour, int minute, int second)
         {
+            this.day = day;
             this.hour = hour;
             this.minute = minute;
             this.second = second;
@@ -22,7 +24,7 @@ namespace AspNetCore.CacheOutput.Core.Time
                 AbsoluteExpiration = new DateTime(
                     model.Year,
                     model.Month,
-                    model.Day,
+                    day,
                     hour,
                     minute,
                     second
@@ -31,9 +33,9 @@ namespace AspNetCore.CacheOutput.Core.Time
 
             if (cacheTime.AbsoluteExpiration <= model)
             {
-                cacheTime.AbsoluteExpiration = cacheTime.AbsoluteExpiration.AddDays(1);
+                cacheTime.AbsoluteExpiration = cacheTime.AbsoluteExpiration.AddMonths(1);
             }
-
+            
             cacheTime.ClientTimeSpan = cacheTime.AbsoluteExpiration.Subtract(model);
 
             return cacheTime;

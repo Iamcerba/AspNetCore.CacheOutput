@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Core", "AspNetCore.CacheOutput.Core\AspNetCore.CacheOutput.Core.csproj", "{13864AFF-7B4B-47D3-A5E2-515CF701DB3B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput", "AspNetCore.CacheOutput\AspNetCore.CacheOutput.csproj", "{DF38048C-8E73-42CE-AFA0-3468A57B4DCA}"
 EndProject
@@ -21,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{13864AFF-7B4B-47D3-A5E2-515CF701DB3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13864AFF-7B4B-47D3-A5E2-515CF701DB3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13864AFF-7B4B-47D3-A5E2-515CF701DB3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13864AFF-7B4B-47D3-A5E2-515CF701DB3B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF38048C-8E73-42CE-AFA0-3468A57B4DCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DF38048C-8E73-42CE-AFA0-3468A57B4DCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF38048C-8E73-42CE-AFA0-3468A57B4DCA}.Release|Any CPU.ActiveCfg = Release|Any CPU

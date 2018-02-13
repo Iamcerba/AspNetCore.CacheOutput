@@ -1,4 +1,4 @@
-using AspNetCore.CacheOutput.Core.Time;
+using AspNetCore.CacheOutput.Time;
 
 namespace AspNetCore.CacheOutput.TimeAttributes
 {

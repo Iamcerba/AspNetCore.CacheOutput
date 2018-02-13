@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AspNetCore.CacheOutput.Core.Time
+namespace AspNetCore.CacheOutput.Time
 {
     public class CacheTime
     {
