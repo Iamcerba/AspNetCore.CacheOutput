@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>AspNetCore.CacheOutput</AssemblyName>
+    <Company />
+    <Authors>Alexander Shabunevich</Authors>
+    <Description>ASP.NET Core port of Strathweb.CacheOutput library (https://github.com/filipw/Strathweb.CacheOutput)</Description>
+    <PackageTags>aspnet, core, netcore, cacheoutput</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
