@@ -1,18 +1,47 @@
 # AspNetCore.CacheOutput
+
 ASP.NET Core port of Strathweb.CacheOutput library (https://github.com/filipw/Strathweb.CacheOutput)
 
-Initial configuration:
+### Initial configuration:
 
-1. In Startup.ConfigureServices(IServiceCollection services) method add:
+1. Install core package: **Install-Package AspNetCore.CacheOutput**
 
-services.AddSingleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>();
+2. Depending on which cache provider you decided to use install any of the following packages:
 
-services.AddSingleton<IApiOutputCache, InMemoryOutputCacheProvider>();
+   * **Install-Package AspNetCore.CacheOutput.InMemory**
 
-2. In Startup.Configure(IApplicationBuilder app, IHostingEnvironment env) method add:
+   * **Install-Package AspNetCore.CacheOutput.Redis**
 
-app.UseCacheOutput();
+3. In "Startup" class "ConfigureServices" method:
 
-3. Add cache filters, for example: 
+   * Register cache key generator:
+   
+     ```
+     services.AddSingleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>();
+     ```
+   
+   * Depending on previosly installed package register cache key provider:
+   
+     ```
+     services.AddSingleton<IApiOutputCache, InMemoryOutputCacheProvider>();
+     ```
+   
+     OR
+   
+     ```
+     services.AddSingleton<IApiOutputCache, StackExchangeRedisOutputCacheProvider>();
+     ```
 
+4. In "Startup" class "Configure" method **initialize cache output**:
+
+   ```
+   app.UseCacheOutput();
+   ```
+   
+5. Decorate any controller method with cache output filters: 
+
+```
 [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, MustRevalidate = true, ExcludeQueryStringFromCacheKey = false)]
+```
+
+6. Read https://github.com/filipw/Strathweb.CacheOutput for more details about common filter usage
