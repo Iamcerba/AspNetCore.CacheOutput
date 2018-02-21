@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AspNetCore.CacheOutput.InMemory\AspNetCore.CacheOutput.InMemory.csproj" />
-    <ProjectReference Include="..\AspNetCore.CacheOutput.Redis\AspNetCore.CacheOutput.Redis.csproj" />
     <ProjectReference Include="..\AspNetCore.CacheOutput\AspNetCore.CacheOutput.csproj" />
   </ItemGroup>
 
