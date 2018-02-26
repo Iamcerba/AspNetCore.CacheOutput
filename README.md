@@ -16,31 +16,31 @@ ASP.NET Core port of Strathweb.CacheOutput library (https://github.com/filipw/St
 
    * Register cache key generator:
    
-     ```
+     ```csharp
      services.AddSingleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>();
      ```
    
    * Depending on previosly installed package register cache key provider:
    
-     ```
+     ```csharp
      services.AddSingleton<IApiOutputCache, InMemoryOutputCacheProvider>();
      ```
    
      OR
    
-     ```
+     ```csharp
      services.AddSingleton<IApiOutputCache, StackExchangeRedisOutputCacheProvider>();
      ```
 
 4. In "Startup" class "Configure" method **initialize cache output**:
 
-   ```
+   ```csharp
    app.UseCacheOutput();
    ```
    
 5. Decorate any controller method with cache output filters: 
 
-```
+```csharp
 [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, MustRevalidate = true, ExcludeQueryStringFromCacheKey = false)]
 ```
 
