@@ -138,6 +138,8 @@ namespace AspNetCore.CacheOutput
 
                             context.Result = new StatusCodeResult((int)HttpStatusCode.NotModified);
 
+                            SetEtag(context.HttpContext.Response, etag);
+
                             ApplyCacheHeaders(context.HttpContext.Response, time);
 
                             return;
@@ -162,7 +164,6 @@ namespace AspNetCore.CacheOutput
                 }
 
                 string contentType = await cache.GetAsync<string>(cacheKey + Constants.ContentTypeKey) ?? expectedMediaType;
-                DateTimeOffset lastModified = DateTimeOffset.Parse(await cache.GetAsync<string>(cacheKey + Constants.LastModifiedKey));
 
                 context.Result = new ContentResult()
                 {
@@ -173,7 +174,19 @@ namespace AspNetCore.CacheOutput
 
                 CacheTime cacheTime = CacheTimeQuery.Execute(DateTime.Now);
 
-                ApplyCacheHeaders(context.HttpContext.Response, cacheTime, lastModified);
+                if (
+                    DateTimeOffset.TryParse(
+                        await cache.GetAsync<string>(cacheKey + Constants.LastModifiedKey), 
+                        out DateTimeOffset lastModified
+                    )
+                )
+                {
+                    ApplyCacheHeaders(context.HttpContext.Response, cacheTime, lastModified);
+                }
+                else
+                {
+                    ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
+                }
             }
             else
             {
@@ -361,7 +374,7 @@ namespace AspNetCore.CacheOutput
 
         private static void SetEtag(HttpResponse response, string etag)
         {
-            if (etag != null)
+            if (!string.IsNullOrWhiteSpace(etag))
             {
                 response.Headers[HeaderNames.ETag] = @"""" + etag.Replace("\"", string.Empty) + @"""";
             }

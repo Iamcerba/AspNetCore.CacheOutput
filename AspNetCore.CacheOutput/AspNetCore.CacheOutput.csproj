@@ -7,7 +7,7 @@
     <Authors>Alexander Shabunevich</Authors>
     <Description>ASP.NET Core port of Strathweb.CacheOutput library (https://github.com/filipw/Strathweb.CacheOutput)</Description>
     <PackageTags>aspnet, core, netcore, cacheoutput, cache</PackageTags>
-	<Version>1.0.5</Version>
+	<Version>1.0.6</Version>
 	<PackageLicenseUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput/blob/master/LICENSE.txt</PackageLicenseUrl>
 	<PackageProjectUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
