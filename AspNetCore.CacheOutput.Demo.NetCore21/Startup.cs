@@ -29,9 +29,6 @@ namespace AspNetCore.CacheOutput.Demo.NetCore21
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // Put app.UseCacheOutput() before any other middleware (even app.UseDeveloperExceptionPage())
-            app.UseCacheOutput();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -42,6 +39,10 @@ namespace AspNetCore.CacheOutput.Demo.NetCore21
             }
 
             app.UseHttpsRedirection();
+
+            // Put app.UseCacheOutput() before app.UseMvc()
+            app.UseCacheOutput();
+
             app.UseMvc();
         }
     }

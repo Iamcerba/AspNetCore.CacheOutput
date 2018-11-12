@@ -15,15 +15,24 @@ namespace AspNetCore.CacheOutput
 
         public async Task Invoke(HttpContext context)
         {
-            using (var stream = new MemoryStream())
+            Stream originalStream = context.Response.Body;
+
+            try
             {
-                Stream originalResponse = context.Response.Body;
-                context.Response.Body = stream;
+                using (Stream stream = new MemoryStream())
+                {
+                    context.Response.Body = stream;
 
-                await Next.Invoke(context);
+                    await Next.Invoke(context);
 
-                stream.Seek(0, SeekOrigin.Begin);
-                await stream.CopyToAsync(originalResponse);
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    await stream.CopyToAsync(originalStream);
+                }
+            }
+            finally
+            {
+                context.Response.Body = originalStream;
             }
         }
     }
