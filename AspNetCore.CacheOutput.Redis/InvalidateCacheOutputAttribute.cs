@@ -55,7 +55,7 @@ namespace AspNetCore.CacheOutput.Redis
                 string controllerName = this.controller ?? 
                     (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerTypeInfo.FullName;
 
-                string baseCachekey = cacheKeyGenerator.MakeBaseCachekey(controllerName, this.methodName);
+                string baseCachekey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
 
                 string key = IncludeActionParameters(context, baseCachekey, actionParameters);
 

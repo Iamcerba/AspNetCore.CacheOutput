@@ -6,6 +6,6 @@ namespace AspNetCore.CacheOutput
     {
         string MakeCacheKey(ActionExecutingContext context, string mediaType, bool excludeQueryString = false);
 
-        string MakeBaseCachekey(string controller, string action);
+        string MakeBaseCacheKey(string controller, string action);
     }
 }

@@ -16,7 +16,7 @@ namespace AspNetCore.CacheOutput
             var actionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
             string controller = actionDescriptor?.ControllerTypeInfo.FullName;
             string action = actionDescriptor?.ActionName;
-            string key = MakeBaseCachekey(controller, action);
+            string key = MakeBaseCacheKey(controller, action);
             IEnumerable<string> actionParameters = context
                 .ActionArguments
                 .Where(x => x.Value != null)
@@ -78,7 +78,7 @@ namespace AspNetCore.CacheOutput
             return $"{key}{parameters}:{mediaType}";
         }
 
-        public virtual string MakeBaseCachekey(string controller, string action)
+        public virtual string MakeBaseCacheKey(string controller, string action)
         {
             return $"{controller.ToLower()}-{action.ToLower()}";
         }

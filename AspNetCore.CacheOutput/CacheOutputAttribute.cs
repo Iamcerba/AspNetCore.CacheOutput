@@ -239,7 +239,7 @@ namespace AspNetCore.CacheOutput
                             var actionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
                             string controller = actionDescriptor?.ControllerTypeInfo.FullName;
                             string action = actionDescriptor?.ActionName;
-                            string baseKey = cacheKeyGenerator.MakeBaseCachekey(controller, action);
+                            string baseKey = cacheKeyGenerator.MakeBaseCacheKey(controller, action);
                             string contentType = context.HttpContext.Response.ContentType;
                             string etag = context.HttpContext.Response.Headers[HeaderNames.ETag];
 
