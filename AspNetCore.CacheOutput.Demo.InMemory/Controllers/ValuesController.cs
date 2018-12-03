@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCore.CacheOutput.Demo.NetCore21.Controllers
+namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
 {
     public class ValuesController : Controller
     {

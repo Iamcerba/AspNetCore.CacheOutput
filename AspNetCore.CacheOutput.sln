@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.InMe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Redis", "AspNetCore.CacheOutput.Redis\AspNetCore.CacheOutput.Redis.csproj", "{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Demo", "AspNetCore.CacheOutput.Demo\AspNetCore.CacheOutput.Demo.csproj", "{1555E6C4-1C51-4D49-8384-FA0F32B593EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.CacheOutput.Demo.InMemory", "AspNetCore.CacheOutput.Demo.InMemory\AspNetCore.CacheOutput.Demo.InMemory.csproj", "{882D3300-5AA6-470F-A36C-645FBFAE5FFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.CacheOutput.Demo.NetCore21", "AspNetCore.CacheOutput.Demo.NetCore21\AspNetCore.CacheOutput.Demo.NetCore21.csproj", "{53AC6071-042E-4C2D-B5EF-1749FFAE2EEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.CacheOutput.Demo.Redis", "AspNetCore.CacheOutput.Demo.Redis\AspNetCore.CacheOutput.Demo.Redis.csproj", "{0A97227F-B11D-4612-8704-7B3A99864548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,21 +33,21 @@ Global
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1555E6C4-1C51-4D49-8384-FA0F32B593EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1555E6C4-1C51-4D49-8384-FA0F32B593EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1555E6C4-1C51-4D49-8384-FA0F32B593EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1555E6C4-1C51-4D49-8384-FA0F32B593EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53AC6071-042E-4C2D-B5EF-1749FFAE2EEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53AC6071-042E-4C2D-B5EF-1749FFAE2EEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53AC6071-042E-4C2D-B5EF-1749FFAE2EEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53AC6071-042E-4C2D-B5EF-1749FFAE2EEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{882D3300-5AA6-470F-A36C-645FBFAE5FFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{882D3300-5AA6-470F-A36C-645FBFAE5FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{882D3300-5AA6-470F-A36C-645FBFAE5FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{882D3300-5AA6-470F-A36C-645FBFAE5FFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A97227F-B11D-4612-8704-7B3A99864548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A97227F-B11D-4612-8704-7B3A99864548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A97227F-B11D-4612-8704-7B3A99864548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A97227F-B11D-4612-8704-7B3A99864548}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{1555E6C4-1C51-4D49-8384-FA0F32B593EA} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
-		{53AC6071-042E-4C2D-B5EF-1749FFAE2EEB} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
+		{882D3300-5AA6-470F-A36C-645FBFAE5FFF} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
+		{0A97227F-B11D-4612-8704-7B3A99864548} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {95A67687-6D38-4245-B703-207EE0FA5F32}

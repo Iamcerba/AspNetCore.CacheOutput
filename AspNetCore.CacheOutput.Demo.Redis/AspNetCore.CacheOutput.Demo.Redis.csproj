@@ -10,10 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AspNetCore.CacheOutput.InMemory\AspNetCore.CacheOutput.InMemory.csproj" />
+    <ProjectReference Include="..\AspNetCore.CacheOutput.Redis\AspNetCore.CacheOutput.Redis.csproj" />
     <ProjectReference Include="..\AspNetCore.CacheOutput\AspNetCore.CacheOutput.csproj" />
   </ItemGroup>
 

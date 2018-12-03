@@ -30,7 +30,8 @@ ASP.NET Core port of Strathweb.CacheOutput library (https://github.com/filipw/St
    
      ```csharp
      services.AddSingleton<IApiOutputCache, StackExchangeRedisOutputCacheProvider>();
-     services.AddSingleton<IDatabase>(_ => ConnectionMultiplexer.Connect(Configuration.GetConnectionString("<redis connection string name>")).GetDatabase(-1, null));
+     services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetConnectionString("<redis connection string name>")));
+     services.AddTransient<IDatabase>(e => e.GetRequiredService<IConnectionMultiplexer>().GetDatabase(-1, null));
      ```
 
 4. In "Startup" class "Configure" method **initialize cache output**:

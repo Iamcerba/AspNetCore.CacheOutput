@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AspNetCore.CacheOutput.Demo.NetCore21
+namespace AspNetCore.CacheOutput.Demo.InMemory
 {
     public class Startup
     {

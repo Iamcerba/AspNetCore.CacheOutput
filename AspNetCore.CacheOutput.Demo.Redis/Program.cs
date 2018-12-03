@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace AspNetCore.CacheOutput.Demo.NetCore21
+namespace AspNetCore.CacheOutput.Demo.Redis
 {
     public class Program
     {

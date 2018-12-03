@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCore.CacheOutput.Demo.Controllers
+namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
 {
     public class ValuesController : Controller
     {
@@ -33,24 +33,24 @@ namespace AspNetCore.CacheOutput.Demo.Controllers
 
         // POST api/values
         [HttpPost("api/values")]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController))]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController))]
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
         public void CreateValue([FromBody]string value)
         {
         }
 
         // PUT api/values/5
         [HttpPut("api/values/{id}")]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController))]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController), "id")] // Invalidating just cache related to this document
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
         public void UpdateValue(int id, [FromBody]string value)
         {
         }
 
         // DELETE api/values/5
         [HttpDelete("api/values/{id}")]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController))]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController), "id")] // Invalidating just cache related to this document
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
         public void DeleteValue(int id)
         {
         }
