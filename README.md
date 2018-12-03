@@ -12,28 +12,20 @@ ASP.NET Core port of Strathweb.CacheOutput library (https://github.com/filipw/St
 
    * **Install-Package AspNetCore.CacheOutput.Redis**
 
-3. In "Startup" class "ConfigureServices" method:
+3. In "Startup" class "ConfigureServices" method depending on previosly installed cache provider register additional services:
 
-   * Register cache key generator:
+   * For AspNetCore.CacheOutput.InMemory cache provider:
    
      ```csharp
-     services.AddSingleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>();
+     services.AddInMemoryCacheOutput();
      ```
    
-   * Depending on previosly installed package register cache key provider:
+   * For AspNetCore.CacheOutput.Redis cache provider:
    
      ```csharp
-     services.AddSingleton<IApiOutputCache, InMemoryOutputCacheProvider>();
+     services.AddRedisCacheOutput(Configuration.GetConnectionString("<redis connection string name>"));
      ```
-   
-     OR
-   
-     ```csharp
-     services.AddSingleton<IApiOutputCache, StackExchangeRedisOutputCacheProvider>();
-     services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetConnectionString("<redis connection string name>")));
-     services.AddTransient<IDatabase>(e => e.GetRequiredService<IConnectionMultiplexer>().GetDatabase(-1, null));
-     ```
-
+	 
 4. In "Startup" class "Configure" method **initialize cache output**:
 
    ```csharp

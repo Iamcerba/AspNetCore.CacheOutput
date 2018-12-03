@@ -8,11 +8,11 @@ using StackExchange.Redis;
 
 namespace AspNetCore.CacheOutput.Redis
 {
-    public class StackExchangeRedisOutputCacheProvider : IApiOutputCache
+    public class StackExchangeRedisCacheOutputProvider : IApiCacheOutput
     {
         private readonly IDatabase redisCache;
 
-        public StackExchangeRedisOutputCacheProvider(IDatabase redisCache)
+        public StackExchangeRedisCacheOutputProvider(IDatabase redisCache)
         {
             this.redisCache = redisCache;
         }
@@ -42,7 +42,7 @@ namespace AspNetCore.CacheOutput.Redis
             {
                 RedisValue[] keys = await redisCache.SetMembersAsync(key);
 
-                foreach (var memberKey in keys)
+                foreach (RedisValue memberKey in keys)
                 {
                     await RemoveAsync(memberKey);
                 }

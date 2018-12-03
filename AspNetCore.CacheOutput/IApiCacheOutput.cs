@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace AspNetCore.CacheOutput
 {
-    public interface IApiOutputCache
+    public interface IApiCacheOutput
     {
         Task RemoveStartsWithAsync(string key);
 

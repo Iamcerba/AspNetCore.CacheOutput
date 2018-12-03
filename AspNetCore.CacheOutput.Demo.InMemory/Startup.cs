@@ -1,5 +1,5 @@
 ﻿using AspNetCore.CacheOutput.Extensions;
-using AspNetCore.CacheOutput.InMemory;
+using AspNetCore.CacheOutput.InMemory.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,8 +20,7 @@ namespace AspNetCore.CacheOutput.Demo.InMemory
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>();
-            services.AddSingleton<IApiOutputCache, InMemoryOutputCacheProvider>();
+            services.AddInMemoryCacheOutput();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

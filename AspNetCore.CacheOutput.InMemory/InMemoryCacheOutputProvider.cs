@@ -6,7 +6,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace AspNetCore.CacheOutput.InMemory
 {
-    public class InMemoryOutputCacheProvider : IApiOutputCache
+    public class InMemoryCacheOutputProvider : IApiCacheOutput
     {
         private static readonly MemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
         private const string CancellationTokenKey = ":cts";

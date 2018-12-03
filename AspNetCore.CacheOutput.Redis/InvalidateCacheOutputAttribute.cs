@@ -47,7 +47,7 @@ namespace AspNetCore.CacheOutput.Redis
             }
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
-            IApiOutputCache cache = serviceProvider.GetService(typeof(IApiOutputCache)) as IApiOutputCache;
+            IApiCacheOutput cache = serviceProvider.GetService(typeof(IApiCacheOutput)) as IApiCacheOutput;
             ICacheKeyGenerator cacheKeyGenerator = serviceProvider.GetService(typeof(ICacheKeyGenerator)) as ICacheKeyGenerator;
 
             if (cache != null && cacheKeyGenerator != null)
