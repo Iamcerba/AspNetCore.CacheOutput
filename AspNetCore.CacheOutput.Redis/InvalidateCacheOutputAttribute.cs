@@ -55,9 +55,9 @@ namespace AspNetCore.CacheOutput.Redis
                 string controllerName = this.controller ?? 
                     (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerTypeInfo.FullName;
 
-                string baseCachekey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
+                string baseCacheKey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
 
-                string key = IncludeActionParameters(context, baseCachekey, actionParameters);
+                string key = IncludeActionParameters(context, baseCacheKey, actionParameters);
 
                 await cache.RemoveStartsWithAsync(key);
             }
@@ -65,13 +65,13 @@ namespace AspNetCore.CacheOutput.Redis
 
         private string IncludeActionParameters(
             ActionExecutingContext actionContext,
-            string baseCachekey,
+            string baseCacheKey,
             string[] additionalActionParameters
         )
         {
             if (!additionalActionParameters.Any())
             {
-                return $"{baseCachekey}";
+                return $"{baseCacheKey}";
             }
 
             IEnumerable<string> actionContextParameters = actionContext
@@ -79,7 +79,7 @@ namespace AspNetCore.CacheOutput.Redis
                 .Where(x => x.Value != null && additionalActionParameters.Contains(x.Key))
                 .Select(x => x.Key + "=" + GetValue(x.Value));
 
-            return $"{baseCachekey}-{string.Join("-", actionContextParameters)}*";
+            return $"{baseCacheKey}-{string.Join("-", actionContextParameters)}*";
         }
 
         private string GetValue(object val)

@@ -46,9 +46,9 @@ namespace AspNetCore.CacheOutput
                 string controllerName = this.controller ?? 
                     (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerTypeInfo.FullName;
 
-                string baseCachekey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
+                string baseCacheKey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
 
-                await cache.RemoveStartsWithAsync(baseCachekey);
+                await cache.RemoveStartsWithAsync(baseCacheKey);
             }
         }
     }
