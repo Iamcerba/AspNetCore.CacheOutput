@@ -33,24 +33,34 @@ namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
 
         // POST api/values
         [HttpPost("api/values")]
-        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController))]
-        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValue))]
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
         public void CreateValue([FromBody]string value)
         {
         }
 
         // PUT api/values/5
         [HttpPut("api/values/{id}")]
-        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController), "id")] // Invalidating just cache related to this document
-        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [CacheOutput.Redis.InvalidateCacheOutput(
+            nameof(GetValue),
+            typeof(ValuesController),
+            null,
+            "id"
+        )] // Invalidating just cache related to this document
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
         public void UpdateValue(int id, [FromBody]string value)
         {
         }
 
         // DELETE api/values/5
         [HttpDelete("api/values/{id}")]
-        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController), "id")] // Invalidating just cache related to this document
-        [CacheOutput.Redis.InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [CacheOutput.Redis.InvalidateCacheOutput(
+            nameof(GetValue),
+            typeof(ValuesController),
+            null,
+            "id"
+        )] // Invalidating just cache related to this document
+        [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
         public void DeleteValue(int id)
         {
         }

@@ -22,6 +22,7 @@ namespace AspNetCore.CacheOutput.InMemory.Extensions
                 throw new ArgumentNullException(nameof(services));
             }
 
+            services.TryAdd(ServiceDescriptor.Singleton<CacheKeyGeneratorFactory, CacheKeyGeneratorFactory>());
             services.TryAdd(ServiceDescriptor.Singleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>());
             services.TryAdd(ServiceDescriptor.Singleton<IApiCacheOutput, InMemoryCacheOutputProvider>());
 

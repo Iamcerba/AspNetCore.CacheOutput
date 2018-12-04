@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
-    <Version>1.0.3.1</Version>
+    <Version>1.0.3.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

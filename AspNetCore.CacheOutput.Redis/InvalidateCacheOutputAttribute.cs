@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNetCore.CacheOutput.Redis
 {
@@ -14,20 +15,24 @@ namespace AspNetCore.CacheOutput.Redis
     {
         private readonly string controller;
         private readonly string methodName;
+        private readonly Type cacheKeyGeneratorType;
         private readonly string[] actionParameters;
 
-        public InvalidateCacheOutputAttribute(string methodName): this(methodName, null)
+        public InvalidateCacheOutputAttribute(string methodName, Type cacheKeyGeneratorType = default(Type))
+            : this(methodName, null, cacheKeyGeneratorType)
         {
         }
 
         public InvalidateCacheOutputAttribute(
             string methodName,
             Type controllerType,
+            Type cacheKeyGeneratorType = default(Type),
             params string[] actionParameters
         )
         {
             this.controller = controllerType != null ? controllerType.FullName : null;
             this.methodName = methodName;
+            this.cacheKeyGeneratorType = cacheKeyGeneratorType;
             this.actionParameters = actionParameters;
         }
 
@@ -47,20 +52,18 @@ namespace AspNetCore.CacheOutput.Redis
             }
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
-            IApiCacheOutput cache = serviceProvider.GetService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-            ICacheKeyGenerator cacheKeyGenerator = serviceProvider.GetService(typeof(ICacheKeyGenerator)) as ICacheKeyGenerator;
+            IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
+            CacheKeyGeneratorFactory cacheKeyGeneratorFactory = serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
+            ICacheKeyGenerator cacheKeyGenerator = cacheKeyGeneratorFactory.GetCacheKeyGenerator(cacheKeyGeneratorType);
 
-            if (cache != null && cacheKeyGenerator != null)
-            {
-                string controllerName = this.controller ?? 
-                    (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerTypeInfo.FullName;
+            string controllerName = this.controller ??
+                (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerTypeInfo.FullName;
 
-                string baseCacheKey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
+            string baseCacheKey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
 
-                string key = IncludeActionParameters(context, baseCacheKey, actionParameters);
+            string key = IncludeActionParameters(context, baseCacheKey, actionParameters);
 
-                await cache.RemoveStartsWithAsync(key);
-            }
+            await cache.RemoveStartsWithAsync(key);
         }
 
         private string IncludeActionParameters(

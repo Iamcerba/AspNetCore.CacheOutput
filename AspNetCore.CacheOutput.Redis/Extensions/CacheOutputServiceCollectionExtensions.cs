@@ -29,6 +29,7 @@ namespace AspNetCore.CacheOutput.Redis.Extensions
                 throw new ArgumentNullException(nameof(connectionString));
             }
 
+            services.TryAdd(ServiceDescriptor.Singleton<CacheKeyGeneratorFactory, CacheKeyGeneratorFactory>());
             services.TryAdd(ServiceDescriptor.Singleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>());
             services.TryAdd(ServiceDescriptor.Singleton<IApiCacheOutput, StackExchangeRedisCacheOutputProvider>());
             services.TryAdd(ServiceDescriptor.Singleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connectionString)));

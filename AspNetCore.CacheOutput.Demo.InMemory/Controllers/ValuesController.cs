@@ -35,24 +35,42 @@ namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
 
         // POST api/values
         [HttpPost("api/values")]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController))]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [InvalidateCacheOutput(
+            nameof(GetValue),
+            cacheKeyGeneratorType: typeof(CustomCacheKeyGenerator)
+        )]
+        [InvalidateCacheOutput(
+            nameof(GetValues),
+            cacheKeyGeneratorType: typeof(CustomCacheKeyGenerator)
+        )]
         public void CreateValue([FromBody]string value)
         {
         }
 
         // PUT api/values/5
         [HttpPut("api/values/{id}")]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController))]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [InvalidateCacheOutput(
+            nameof(GetValue),
+            cacheKeyGeneratorType: typeof(CustomCacheKeyGenerator)
+        )]
+        [InvalidateCacheOutput(
+            nameof(GetValues),
+            cacheKeyGeneratorType: typeof(CustomCacheKeyGenerator)
+        )]
         public void UpdateValue(int id, [FromBody]string value)
         {
         }
 
         // DELETE api/values/5
         [HttpDelete("api/values/{id}")]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValue), typeof(ValuesController))]
-        [InvalidateCacheOutput(nameof(ValuesController.GetValues), typeof(ValuesController))]
+        [InvalidateCacheOutput(
+            nameof(GetValue),
+            cacheKeyGeneratorType: typeof(CustomCacheKeyGenerator)
+        )]
+        [InvalidateCacheOutput(
+            nameof(GetValues),
+            cacheKeyGeneratorType: typeof(CustomCacheKeyGenerator)
+        )]
         public void DeleteValue(int id)
         {
         }

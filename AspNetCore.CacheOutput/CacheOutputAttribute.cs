@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
@@ -114,93 +115,87 @@ namespace AspNetCore.CacheOutput
             }
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
-            IApiCacheOutput cache = serviceProvider.GetService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-            ICacheKeyGenerator cacheKeyGenerator = GetCacheKeyGenerator(serviceProvider);
+            IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
+            CacheKeyGeneratorFactory cacheKeyGeneratorFactory = serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
+            ICacheKeyGenerator cacheKeyGenerator = cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
 
-            if (cache != null && cacheKeyGenerator != null)
+            EnsureCacheTimeQuery();
+
+            string expectedMediaType = GetExpectedMediaType(context);
+
+            string cacheKey = cacheKeyGenerator.MakeCacheKey(context, expectedMediaType, ExcludeQueryStringFromCacheKey);
+
+            context.HttpContext.Items[CurrentRequestCacheKey] = cacheKey;
+
+            if (!await cache.ContainsAsync(cacheKey))
             {
-                EnsureCacheTimeQuery();
+                await next();
 
-                string expectedMediaType = GetExpectedMediaType(context);
+                return;
+            }
 
-                string cacheKey = cacheKeyGenerator.MakeCacheKey(context, expectedMediaType, ExcludeQueryStringFromCacheKey);
+            context.HttpContext.Items[CurrentRequestSkipResultExecution] = true;
 
-                context.HttpContext.Items[CurrentRequestCacheKey] = cacheKey;
+            if (context.HttpContext.Request.Headers[HeaderNames.IfNoneMatch].Any())
+            {
+                string etag = await cache.GetAsync<string>(cacheKey + Constants.EtagKey);
 
-                if (!await cache.ContainsAsync(cacheKey))
+                if (etag != null)
                 {
-                    await next();
-
-                    return;
-                }
-
-                context.HttpContext.Items[CurrentRequestSkipResultExecution] = true;
-
-                if (context.HttpContext.Request.Headers[HeaderNames.IfNoneMatch].Any())
-                {
-                    string etag = await cache.GetAsync<string>(cacheKey + Constants.EtagKey);
-
-                    if (etag != null)
+                    if (context.HttpContext.Request.Headers[HeaderNames.IfNoneMatch].Any(e => e == etag))
                     {
-                        if (context.HttpContext.Request.Headers[HeaderNames.IfNoneMatch].Any(e => e == etag))
-                        {
-                            CacheTime time = CacheTimeQuery.Execute(DateTime.Now);
+                        CacheTime time = CacheTimeQuery.Execute(DateTime.Now);
 
-                            context.Result = new StatusCodeResult((int)HttpStatusCode.NotModified);
+                        context.Result = new StatusCodeResult((int)HttpStatusCode.NotModified);
 
-                            SetEtag(context.HttpContext.Response, etag);
+                        SetEtag(context.HttpContext.Response, etag);
 
-                            ApplyCacheHeaders(context.HttpContext.Response, time);
+                        ApplyCacheHeaders(context.HttpContext.Response, time);
 
-                            return;
-                        }
+                        return;
                     }
                 }
+            }
 
-                byte[] val = await cache.GetAsync<byte[]>(cacheKey);
+            byte[] val = await cache.GetAsync<byte[]>(cacheKey);
 
-                if (val == null)
-                {
-                    await next();
+            if (val == null)
+            {
+                await next();
 
-                    return;
-                }
+                return;
+            }
 
-                string responseEtag = await cache.GetAsync<string>(cacheKey + Constants.EtagKey);
+            string responseEtag = await cache.GetAsync<string>(cacheKey + Constants.EtagKey);
 
-                if (responseEtag != null)
-                {
-                    SetEtag(context.HttpContext.Response, responseEtag);
-                }
+            if (responseEtag != null)
+            {
+                SetEtag(context.HttpContext.Response, responseEtag);
+            }
 
-                string contentType = await cache.GetAsync<string>(cacheKey + Constants.ContentTypeKey) ?? expectedMediaType;
+            string contentType = await cache.GetAsync<string>(cacheKey + Constants.ContentTypeKey) ?? expectedMediaType;
 
-                context.Result = new ContentResult()
-                {
-                    Content = Encoding.UTF8.GetString(val),
-                    ContentType = contentType,
-                    StatusCode = (int)HttpStatusCode.OK
-                };
+            context.Result = new ContentResult()
+            {
+                Content = Encoding.UTF8.GetString(val),
+                ContentType = contentType,
+                StatusCode = (int)HttpStatusCode.OK
+            };
 
-                CacheTime cacheTime = CacheTimeQuery.Execute(DateTime.Now);
+            CacheTime cacheTime = CacheTimeQuery.Execute(DateTime.Now);
 
-                if (
-                    DateTimeOffset.TryParse(
-                        await cache.GetAsync<string>(cacheKey + Constants.LastModifiedKey), 
-                        out DateTimeOffset lastModified
-                    )
+            if (
+                DateTimeOffset.TryParse(
+                    await cache.GetAsync<string>(cacheKey + Constants.LastModifiedKey),
+                    out DateTimeOffset lastModified
                 )
-                {
-                    ApplyCacheHeaders(context.HttpContext.Response, cacheTime, lastModified);
-                }
-                else
-                {
-                    ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
-                }
+            )
+            {
+                ApplyCacheHeaders(context.HttpContext.Response, cacheTime, lastModified);
             }
             else
             {
-                await next();
+                ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
             }
         }
 
@@ -231,60 +226,58 @@ namespace AspNetCore.CacheOutput
             if (cacheTime.AbsoluteExpiration > actionExecutionTimestamp)
             {
                 IServiceProvider serviceProvider = context.HttpContext.RequestServices;
-                IApiCacheOutput cache = serviceProvider.GetService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-                ICacheKeyGenerator cacheKeyGenerator = GetCacheKeyGenerator(serviceProvider);
+                IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
+                CacheKeyGeneratorFactory cacheKeyGeneratorFactory = serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
+                ICacheKeyGenerator cacheKeyGenerator = cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
 
-                if (cache != null && cacheKeyGenerator != null)
+                string cacheKey = context.HttpContext.Items[CurrentRequestCacheKey] as string;
+
+                if (!string.IsNullOrWhiteSpace(cacheKey))
                 {
-                    string cacheKey = context.HttpContext.Items[CurrentRequestCacheKey] as string;
-
-                    if (!string.IsNullOrWhiteSpace(cacheKey))
+                    if (!await cache.ContainsAsync(cacheKey))
                     {
-                        if (!await cache.ContainsAsync(cacheKey))
+                        SetEtag(context.HttpContext.Response, CreateEtag());
+
+                        context.HttpContext.Response.Headers.Remove(HeaderNames.ContentLength);
+
+                        var actionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+                        string controller = actionDescriptor?.ControllerTypeInfo.FullName;
+                        string action = actionDescriptor?.ActionName;
+                        string baseKey = cacheKeyGenerator.MakeBaseCacheKey(controller, action);
+                        string contentType = context.HttpContext.Response.ContentType;
+                        string etag = context.HttpContext.Response.Headers[HeaderNames.ETag];
+
+                        context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+
+                        using (var streamReader = new StreamReader(context.HttpContext.Response.Body, Encoding.UTF8, true, 512, true))
                         {
-                            SetEtag(context.HttpContext.Response, CreateEtag());
+                            string responseBodyContent = await streamReader.ReadToEndAsync();
+                            byte[] responseBodyContentAsBytes = Encoding.UTF8.GetBytes(responseBodyContent);
 
-                            context.HttpContext.Response.Headers.Remove(HeaderNames.ContentLength);
-
-                            var actionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
-                            string controller = actionDescriptor?.ControllerTypeInfo.FullName;
-                            string action = actionDescriptor?.ActionName;
-                            string baseKey = cacheKeyGenerator.MakeBaseCacheKey(controller, action);
-                            string contentType = context.HttpContext.Response.ContentType;
-                            string etag = context.HttpContext.Response.Headers[HeaderNames.ETag];
-
-                            context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-
-                            using (var streamReader = new StreamReader(context.HttpContext.Response.Body, Encoding.UTF8, true, 512, true))
-                            {
-                                string responseBodyContent = await streamReader.ReadToEndAsync();
-                                byte[] responseBodyContentAsBytes = Encoding.UTF8.GetBytes(responseBodyContent);
-
-                                await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
-                                await cache.AddAsync(cacheKey, responseBodyContentAsBytes, cacheTime.AbsoluteExpiration, baseKey);
-                            }
-
-                            await cache.AddAsync(
-                                cacheKey + Constants.ContentTypeKey,
-                                contentType,
-                                cacheTime.AbsoluteExpiration,
-                                baseKey
-                            );
-
-                            await cache.AddAsync(
-                                cacheKey + Constants.EtagKey,
-                                etag,
-                                cacheTime.AbsoluteExpiration,
-                                baseKey
-                            );
-
-                            await cache.AddAsync(
-                                cacheKey + Constants.LastModifiedKey,
-                                actionExecutionTimestamp.ToString(),
-                                cacheTime.AbsoluteExpiration,
-                                baseKey
-                            );
+                            await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
+                            await cache.AddAsync(cacheKey, responseBodyContentAsBytes, cacheTime.AbsoluteExpiration, baseKey);
                         }
+
+                        await cache.AddAsync(
+                            cacheKey + Constants.ContentTypeKey,
+                            contentType,
+                            cacheTime.AbsoluteExpiration,
+                            baseKey
+                        );
+
+                        await cache.AddAsync(
+                            cacheKey + Constants.EtagKey,
+                            etag,
+                            cacheTime.AbsoluteExpiration,
+                            baseKey
+                        );
+
+                        await cache.AddAsync(
+                            cacheKey + Constants.LastModifiedKey,
+                            actionExecutionTimestamp.ToString(),
+                            cacheTime.AbsoluteExpiration,
+                            baseKey
+                        );
                     }
                 }
             }
@@ -385,15 +378,6 @@ namespace AspNetCore.CacheOutput
         protected virtual string CreateEtag()
         {
             return Guid.NewGuid().ToString();
-        }
-
-        protected virtual ICacheKeyGenerator GetCacheKeyGenerator(IServiceProvider serviceProvider)
-        {
-            Type generatorType = CacheKeyGenerator ?? typeof(ICacheKeyGenerator);
-
-            ICacheKeyGenerator generator = serviceProvider.GetService(generatorType) as ICacheKeyGenerator;
-
-            return generator ?? new DefaultCacheKeyGenerator();
         }
 
         private static void SetEtag(HttpResponse response, string etag)
