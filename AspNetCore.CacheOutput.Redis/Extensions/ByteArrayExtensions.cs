@@ -3,9 +3,9 @@ using System.IO.Compression;
 
 namespace AspNetCore.CacheOutput.Redis.Extensions
 {
-    public static class ByteArrayExtensions
+    internal static class ByteArrayExtensions
     {
-        public static byte[] Compress(
+        internal static byte[] Compress(
             this byte[] target, 
             CompressionLevel compressionLevel = CompressionLevel.Fastest
         )
@@ -29,7 +29,7 @@ namespace AspNetCore.CacheOutput.Redis.Extensions
             }
         }
 
-        public static byte[] Decompress(this byte[] target)
+        internal static byte[] Decompress(this byte[] target)
         {
             if (target == null)
             {
