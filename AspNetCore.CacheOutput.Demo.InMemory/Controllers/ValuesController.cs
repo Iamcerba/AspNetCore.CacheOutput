@@ -11,7 +11,8 @@ namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
             ClientTimeSpan = 0,
             ServerTimeSpan = 3600,
             MustRevalidate = true,
-            ExcludeQueryStringFromCacheKey = false
+            ExcludeQueryStringFromCacheKey = false,
+            CacheKeyGenerator = typeof(CustomCacheKeyGenerator)
         )]
         public IEnumerable<string> GetValues()
         {
@@ -24,7 +25,8 @@ namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
             ClientTimeSpan = 0,
             ServerTimeSpan = 3600,
             MustRevalidate = true,
-            ExcludeQueryStringFromCacheKey = false
+            ExcludeQueryStringFromCacheKey = false,
+            CacheKeyGenerator = typeof(CustomCacheKeyGenerator)
         )]
         public string GetValue(int id)
         {

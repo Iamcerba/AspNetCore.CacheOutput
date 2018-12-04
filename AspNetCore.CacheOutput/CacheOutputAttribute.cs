@@ -79,6 +79,16 @@ namespace AspNetCore.CacheOutput
         /// </summary>
         public bool Private { get; set; }
 
+        /// <summary>
+        /// Class used to generate caching keys
+        /// </summary>
+        public Type CacheKeyGenerator { get; set; }
+
+        /// <summary>
+        /// If set to something else than an empty string, this value will always be used for the Content-Type header, regardless of content negotiation.
+        /// </summary>
+        public string MediaType { get; set; }
+
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (context == null)
@@ -105,7 +115,7 @@ namespace AspNetCore.CacheOutput
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IApiCacheOutput cache = serviceProvider.GetService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-            ICacheKeyGenerator cacheKeyGenerator = serviceProvider.GetService(typeof(ICacheKeyGenerator)) as ICacheKeyGenerator;
+            ICacheKeyGenerator cacheKeyGenerator = GetCacheKeyGenerator(serviceProvider);
 
             if (cache != null && cacheKeyGenerator != null)
             {
@@ -222,7 +232,7 @@ namespace AspNetCore.CacheOutput
             {
                 IServiceProvider serviceProvider = context.HttpContext.RequestServices;
                 IApiCacheOutput cache = serviceProvider.GetService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-                ICacheKeyGenerator cacheKeyGenerator = serviceProvider.GetService(typeof(ICacheKeyGenerator)) as ICacheKeyGenerator;
+                ICacheKeyGenerator cacheKeyGenerator = GetCacheKeyGenerator(serviceProvider);
 
                 if (cache != null && cacheKeyGenerator != null)
                 {
@@ -312,6 +322,11 @@ namespace AspNetCore.CacheOutput
 
         protected virtual string GetExpectedMediaType(ActionContext context)
         {
+            if (!string.IsNullOrWhiteSpace(this.MediaType))
+            {
+                return this.MediaType;
+            }
+
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IOptions<MvcOptions> options = serviceProvider.GetService(typeof(IOptions<MvcOptions>)) as IOptions<MvcOptions>;
 
@@ -370,6 +385,15 @@ namespace AspNetCore.CacheOutput
         protected virtual string CreateEtag()
         {
             return Guid.NewGuid().ToString();
+        }
+
+        protected virtual ICacheKeyGenerator GetCacheKeyGenerator(IServiceProvider serviceProvider)
+        {
+            Type generatorType = CacheKeyGenerator ?? typeof(ICacheKeyGenerator);
+
+            ICacheKeyGenerator generator = serviceProvider.GetService(generatorType) as ICacheKeyGenerator;
+
+            return generator ?? new DefaultCacheKeyGenerator();
         }
 
         private static void SetEtag(HttpResponse response, string etag)

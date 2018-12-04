@@ -22,6 +22,8 @@ namespace AspNetCore.CacheOutput.Demo.InMemory
         {
             services.AddInMemoryCacheOutput();
 
+            services.AddSingleton<CustomCacheKeyGenerator>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
