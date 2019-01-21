@@ -57,7 +57,9 @@ namespace AspNetCore.CacheOutput.InMemory
             {
                 if (Cache.TryGetValue($"{dependsOnKey}{CancellationTokenKey}", out CancellationTokenSource existingCts))
                 {
-                    Cache.Set(key, value, new CancellationChangeToken(existingCts.Token));
+                    options.AddExpirationToken(new CancellationChangeToken(existingCts.Token));
+
+                    Cache.Set(key, value, options);
                 }
             }
         }
