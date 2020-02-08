@@ -285,7 +285,7 @@ namespace AspNetCore.CacheOutput
 
         protected virtual bool IsCachingAllowed(FilterContext actionContext, bool anonymousOnly)
         {
-            if (anonymousOnly && Thread.CurrentPrincipal.Identity.IsAuthenticated)
+            if (anonymousOnly && (Thread.CurrentPrincipal?.Identity.IsAuthenticated ?? false))
             {
                 return false;
             }

@@ -1,24 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;netstandard2.0</TargetFrameworks>
     <Authors>Alexander Shabunevich</Authors>
     <Company />
     <Description>StackExchangeRedisOutputCacheProvider for AspNetCore.CacheOutput package</Description>
     <Copyright>Copyright © 2018 Alexander Shabunevich</Copyright>
-    <PackageLicenseUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Jil" Version="2.16.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.0.2" Condition="'$(TargetFramework)' == 'netcoreapp2.0'" />
+    <PackageReference Include="Jil" Version="2.17.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.2" Condition="'$(TargetFramework)' == 'netcoreapp2.1'" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" Condition="'$(TargetFramework)' == 'netcoreapp2.2' Or '$(TargetFramework)' == 'netstandard2.0'" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'netstandard2.0'" />
   </ItemGroup>
 
   <ItemGroup>
