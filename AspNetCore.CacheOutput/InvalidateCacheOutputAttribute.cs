@@ -26,17 +26,27 @@ namespace AspNetCore.CacheOutput
             this.cacheKeyGeneratorType = cacheKeyGeneratorType;
         }
 
-        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        private bool IsFailure(int statusCode)
         {
-            await base.OnActionExecutionAsync(context, next);
+            return !(
+                    statusCode >= (int)HttpStatusCode.OK &&
+                    statusCode < (int)HttpStatusCode.Ambiguous
+                );
+        }
 
-            if (
-                context.HttpContext.Response != null &&
-                !(
-                    context.HttpContext.Response.StatusCode >= (int)HttpStatusCode.OK && 
-                    context.HttpContext.Response.StatusCode < (int)HttpStatusCode.Ambiguous
-                )
-            )
+        public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        {
+            await base.OnResultExecutionAsync(context, next);
+
+#if NETCOREAPP2_0 || NETCOREAPP2_1
+            var isFailure = IsFailure(context.HttpContext.Response.StatusCode);
+#else
+            var result = context.Result as IStatusCodeActionResult;
+            var isFailure = result == null || result.StatusCode == null ? 
+                IsFailure(context.HttpContext.Response.StatusCode) :
+                IsFailure(result.StatusCode.Value);
+#endif
+            if (isFailure)
             {
                 return;
             }
