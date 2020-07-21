@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-#if !(NETCOREAPP2_0 || NETCOREAPP2_1)
+#if !NETCOREAPP2_1
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 #endif
 
@@ -39,7 +39,7 @@ namespace AspNetCore.CacheOutput
         {
             await base.OnResultExecutionAsync(context, next);
 
-#if NETCOREAPP2_0 || NETCOREAPP2_1
+#if NETCOREAPP2_1
             bool isCacheable = IsCacheableStatusCode(context.HttpContext.Response?.StatusCode);
 #else
             IStatusCodeActionResult actionResult = context.Result as IStatusCodeActionResult;
