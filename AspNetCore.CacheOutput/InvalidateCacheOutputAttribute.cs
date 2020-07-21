@@ -32,12 +32,12 @@ namespace AspNetCore.CacheOutput
             await base.OnResultExecutionAsync(context, next);
 
 #if NETCOREAPP2_0 || NETCOREAPP2_1
-            var isCacheable = context.HttpContext.Response != null ? IsCacheable(context.HttpContext.Response.StatusCode) : true;
+            var isCacheable = IsCacheable(context.HttpContext.Response?.StatusCode);
 #else
             var result = context.Result as IStatusCodeActionResult;
-            var isCacheable = result == null || result.StatusCode == null ? 
-                IsCacheable(context.HttpContext.Response.StatusCode) :
-                IsCacheable(result.StatusCode.Value);
+            var isCacheable = result == null ? 
+                IsCacheable(context.HttpContext.Response?.StatusCode) :
+                IsCacheable(result.StatusCode);
 #endif
             if (!isCacheable)
             {
@@ -57,10 +57,11 @@ namespace AspNetCore.CacheOutput
             await cache.RemoveStartsWithAsync(baseCacheKey);
         }
 
-        private bool IsCacheable(int statusCode)
+        private bool IsCacheable(int? statusCode)
         {
-            return statusCode >= (int)HttpStatusCode.OK &&
-                   statusCode < (int)HttpStatusCode.Ambiguous;
+            return statusCode == null ||
+                   (statusCode >= (int)HttpStatusCode.OK &&
+                    statusCode < (int)HttpStatusCode.Ambiguous);
         }
     }
 }
