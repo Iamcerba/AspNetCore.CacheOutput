@@ -3,6 +3,11 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+
+#if !(NETCOREAPP2_0 || NETCOREAPP2_1)
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+#endif
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNetCore.CacheOutput
@@ -19,32 +24,41 @@ namespace AspNetCore.CacheOutput
         {
         }
 
-        public InvalidateCacheOutputAttribute(string methodName, Type controllerType, Type cacheKeyGeneratorType = default(Type))
+        public InvalidateCacheOutputAttribute(
+            string methodName,
+            Type controllerType,
+            Type cacheKeyGeneratorType = default(Type)
+        )
         {
             this.controller = controllerType != null ? controllerType.FullName : null;
             this.methodName = methodName;
             this.cacheKeyGeneratorType = cacheKeyGeneratorType;
         }
 
-        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
-            await base.OnActionExecutionAsync(context, next);
+            await base.OnResultExecutionAsync(context, next);
 
-            if (
-                context.HttpContext.Response != null &&
-                !(
-                    context.HttpContext.Response.StatusCode >= (int)HttpStatusCode.OK && 
-                    context.HttpContext.Response.StatusCode < (int)HttpStatusCode.Ambiguous
-                )
-            )
+#if NETCOREAPP2_0 || NETCOREAPP2_1
+            bool isCacheable = IsCacheableStatusCode(context.HttpContext.Response?.StatusCode);
+#else
+            IStatusCodeActionResult actionResult = context.Result as IStatusCodeActionResult;
+
+            bool isCacheable = actionResult != null
+                ? IsCacheableStatusCode(actionResult.StatusCode)
+                : IsCacheableStatusCode(context.HttpContext.Response?.StatusCode);
+#endif
+            if (!isCacheable)
             {
                 return;
             }
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-            CacheKeyGeneratorFactory cacheKeyGeneratorFactory = serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
-            ICacheKeyGenerator cacheKeyGenerator = cacheKeyGeneratorFactory.GetCacheKeyGenerator(cacheKeyGeneratorType);
+            CacheKeyGeneratorFactory cacheKeyGeneratorFactory =
+                serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
+            ICacheKeyGenerator cacheKeyGenerator =
+                cacheKeyGeneratorFactory.GetCacheKeyGenerator(cacheKeyGeneratorType);
 
             string controllerName = this.controller ??
                 (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerTypeInfo.FullName;
@@ -52,6 +66,12 @@ namespace AspNetCore.CacheOutput
             string baseCacheKey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
 
             await cache.RemoveStartsWithAsync(baseCacheKey);
+        }
+
+        private bool IsCacheableStatusCode(int? statusCode)
+        {
+            return statusCode == null ||
+                (statusCode >= (int)HttpStatusCode.OK && statusCode < (int)HttpStatusCode.Ambiguous);
         }
     }
 }

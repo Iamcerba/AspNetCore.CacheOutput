@@ -217,6 +217,39 @@ public void Post(Team value)
 }
 ```
 
+If an error occurs that would prevent the resource from getting updated, return a non-Success status code to stop the invalidation:
+
+```csharp
+[InvalidateCacheOutput(nameof(Get)] // this will invalidate Get upon a successful request
+public void Put(Team value)
+{
+    try{
+      // do stuff that causes an error
+    }
+    catch (...specific error)
+    {
+       Response.StatusCode = (int)HttpStatusCode.BadRequest;  // Prevents clearing the cache for the controller(s)
+    }
+}
+```
+This works with `ActionResult`s as well:
+```csharp
+[InvalidateCacheOutput(nameof(Get)] // this will invalidate Get upon a successful request
+public ActionResult Put(Team value)
+{
+    try{
+      // do stuff that causes an error
+    }
+    catch (...specific error)
+    {
+       return BadRequest();  // Prevents clearing the cache for the controller(s)
+    }
+    return NoContent();
+}
+```
+Please note that the `Forbiden()` `ActionResult` does not have a StatusCode causing it to fall back to the Response.StatusCode usage. Since `ActionResult` values aren't
+merged into the `Response` until much later, the `Response.StatusCode` will be defaulted to 200 and cause the cache to be invalidated. Setting the `Response.StatusCode` 
+to 403 will cause it to behave as expected.
 
 Customizing the cache keys
 --------------------------
