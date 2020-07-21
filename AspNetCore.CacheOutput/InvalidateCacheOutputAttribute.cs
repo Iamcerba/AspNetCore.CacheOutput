@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNetCore.CacheOutput
@@ -26,27 +27,19 @@ namespace AspNetCore.CacheOutput
             this.cacheKeyGeneratorType = cacheKeyGeneratorType;
         }
 
-        private bool IsFailure(int statusCode)
-        {
-            return !(
-                    statusCode >= (int)HttpStatusCode.OK &&
-                    statusCode < (int)HttpStatusCode.Ambiguous
-                );
-        }
-
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             await base.OnResultExecutionAsync(context, next);
 
 #if NETCOREAPP2_0 || NETCOREAPP2_1
-            var isFailure = IsFailure(context.HttpContext.Response.StatusCode);
+            var isCacheable = context.HttpContext.Response != null ? IsCacheable(context.HttpContext.Response.StatusCode) : true;
 #else
             var result = context.Result as IStatusCodeActionResult;
-            var isFailure = result == null || result.StatusCode == null ? 
-                IsFailure(context.HttpContext.Response.StatusCode) :
-                IsFailure(result.StatusCode.Value);
+            var isCacheable = result == null || result.StatusCode == null ? 
+                IsCacheable(context.HttpContext.Response.StatusCode) :
+                IsCacheable(result.StatusCode.Value);
 #endif
-            if (isFailure)
+            if (!isCacheable)
             {
                 return;
             }
@@ -62,6 +55,12 @@ namespace AspNetCore.CacheOutput
             string baseCacheKey = cacheKeyGenerator.MakeBaseCacheKey(controllerName, this.methodName);
 
             await cache.RemoveStartsWithAsync(baseCacheKey);
+        }
+
+        private bool IsCacheable(int statusCode)
+        {
+            return statusCode >= (int)HttpStatusCode.OK &&
+                   statusCode < (int)HttpStatusCode.Ambiguous;
         }
     }
 }
