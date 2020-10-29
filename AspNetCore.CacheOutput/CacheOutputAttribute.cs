@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using AspNetCore.CacheOutput.Time;
 using Microsoft.AspNetCore.Http;
@@ -285,7 +284,7 @@ namespace AspNetCore.CacheOutput
 
         protected virtual bool IsCachingAllowed(FilterContext actionContext, bool anonymousOnly)
         {
-            if (anonymousOnly && (Thread.CurrentPrincipal?.Identity.IsAuthenticated ?? false))
+            if (anonymousOnly && (actionContext.HttpContext.User?.Identity.IsAuthenticated ?? false))
             {
                 return false;
             }
