@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
-
-#if !NETCOREAPP2_1
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-#endif
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNetCore.CacheOutput
@@ -39,15 +35,10 @@ namespace AspNetCore.CacheOutput
         {
             await base.OnResultExecutionAsync(context, next);
 
-#if NETCOREAPP2_1
-            bool isCacheable = IsCacheableStatusCode(context.HttpContext.Response?.StatusCode);
-#else
-            IStatusCodeActionResult actionResult = context.Result as IStatusCodeActionResult;
-
-            bool isCacheable = actionResult != null
+            bool isCacheable = context.Result is StatusCodeResult actionResult
                 ? IsCacheableStatusCode(actionResult.StatusCode)
                 : IsCacheableStatusCode(context.HttpContext.Response?.StatusCode);
-#endif
+
             if (!isCacheable)
             {
                 return;
