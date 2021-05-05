@@ -2,7 +2,6 @@
 using AspNetCore.CacheOutput.Redis.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +21,7 @@ namespace AspNetCore.CacheOutput.Demo.Redis
         {
             services.AddRedisCacheOutput(Configuration.GetConnectionString("RedisCache"));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,17 +31,20 @@ namespace AspNetCore.CacheOutput.Demo.Redis
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
             app.UseHttpsRedirection();
 
-            // Put app.UseCacheOutput() before app.UseMvc()
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            // Put app.UseCacheOutput() before app.UseEndpoints()
             app.UseCacheOutput();
 
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

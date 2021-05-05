@@ -8,23 +8,12 @@
     <Description>ASP.NET Core port of Strathweb.CacheOutput library (https://github.com/filipw/Strathweb.CacheOutput)</Description>
     <PackageTags>aspnet, core, netcore, cacheoutput, cache</PackageTags>
     <Version>2.0.0-pre1</Version>
-  <PackageProjectUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</PackageProjectUrl>
-  <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
-  <RepositoryType>GitHub</RepositoryType>
-  <Copyright>Copyright © 2018 Alexander Shabunevich</Copyright>
-  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <Copyright>Copyright © 2018 Alexander Shabunevich</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
-
-  <!--<ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
-  </ItemGroup>-->
-
-  <!--<ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5"/>
-  </ItemGroup>-->
-
-  <!--<ItemGroup Condition="$(TargetFramework) == 'net5.0'">
-  </ItemGroup>-->
 
   <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
