@@ -11,11 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.InMe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Redis", "AspNetCore.CacheOutput.Redis\AspNetCore.CacheOutput.Redis.csproj", "{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Demo.InMemory", "AspNetCore.CacheOutput.Demo.InMemory\AspNetCore.CacheOutput.Demo.InMemory.csproj", "{882D3300-5AA6-470F-A36C-645FBFAE5FFF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Demo.Redis", "AspNetCore.CacheOutput.Demo.Redis\AspNetCore.CacheOutput.Demo.Redis.csproj", "{0A97227F-B11D-4612-8704-7B3A99864548}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.CacheOutput.Demo.InMemory31", "AspNetCore.CacheOutput.Demo.InMemory31\AspNetCore.CacheOutput.Demo.InMemory31.csproj", "{F71C5335-1341-42BE-84A6-B4280538F2F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Demo.InMemory31", "AspNetCore.CacheOutput.Demo.InMemory31\AspNetCore.CacheOutput.Demo.InMemory31.csproj", "{F71C5335-1341-42BE-84A6-B4280538F2F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{882D3300-5AA6-470F-A36C-645FBFAE5FFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{882D3300-5AA6-470F-A36C-645FBFAE5FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{882D3300-5AA6-470F-A36C-645FBFAE5FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{882D3300-5AA6-470F-A36C-645FBFAE5FFF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A97227F-B11D-4612-8704-7B3A99864548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A97227F-B11D-4612-8704-7B3A99864548}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A97227F-B11D-4612-8704-7B3A99864548}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,7 +46,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{882D3300-5AA6-470F-A36C-645FBFAE5FFF} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
 		{0A97227F-B11D-4612-8704-7B3A99864548} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
 		{F71C5335-1341-42BE-84A6-B4280538F2F1} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
 	EndGlobalSection
