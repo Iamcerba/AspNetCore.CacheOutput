@@ -245,36 +245,36 @@ namespace AspNetCore.CacheOutput
                         string contentType = context.HttpContext.Response.ContentType;
                         string etag = context.HttpContext.Response.Headers[HeaderNames.ETag];
 
-                        var memoryStream = context.HttpContext.Response.Body as MemoryStream;
+                        var stream = context.HttpContext.Response.Body;
 
-                        if (memoryStream != null)
-                        {
-                            byte[] content = memoryStream.ToArray();
+                        var memoryStream = new MemoryStream();
+                        await stream.CopyToAsync(memoryStream);
 
-                            await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
-                            await cache.AddAsync(cacheKey, content, cacheTime.AbsoluteExpiration, baseKey);
+                        byte[] content = memoryStream.ToArray();
 
-                            await cache.AddAsync(
-                                cacheKey + Constants.ContentTypeKey,
-                                contentType,
-                                cacheTime.AbsoluteExpiration,
-                                baseKey
-                            );
+                        await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
+                        await cache.AddAsync(cacheKey, content, cacheTime.AbsoluteExpiration, baseKey);
 
-                            await cache.AddAsync(
-                                cacheKey + Constants.EtagKey,
-                                etag,
-                                cacheTime.AbsoluteExpiration,
-                                baseKey
-                            );
+                        await cache.AddAsync(
+                            cacheKey + Constants.ContentTypeKey,
+                            contentType,
+                            cacheTime.AbsoluteExpiration,
+                            baseKey
+                        );
 
-                            await cache.AddAsync(
-                                cacheKey + Constants.LastModifiedKey,
-                                actionExecutionTimestamp.ToString(),
-                                cacheTime.AbsoluteExpiration,
-                                baseKey
-                            );
-                        }
+                        await cache.AddAsync(
+                            cacheKey + Constants.EtagKey,
+                            etag,
+                            cacheTime.AbsoluteExpiration,
+                            baseKey
+                        );
+
+                        await cache.AddAsync(
+                            cacheKey + Constants.LastModifiedKey,
+                            actionExecutionTimestamp.ToString(),
+                            cacheTime.AbsoluteExpiration,
+                            baseKey
+                        );
                     }
                 }
             }

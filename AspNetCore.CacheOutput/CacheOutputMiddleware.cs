@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace AspNetCore.CacheOutput
@@ -10,30 +9,12 @@ namespace AspNetCore.CacheOutput
 
         public CacheOutputMiddleware(RequestDelegate next)
         {
-            this.Next = next;
+            Next = next;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            Stream originalStream = context.Response.Body;
-
-            try
-            {
-                using (Stream stream = new MemoryStream())
-                {
-                    context.Response.Body = stream;
-
-                    await Next.Invoke(context);
-
-                    stream.Seek(0, SeekOrigin.Begin);
-
-                    await stream.CopyToAsync(originalStream);
-                }
-            }
-            finally
-            {
-                context.Response.Body = originalStream;
-            }
+            await Next.Invoke(context);
         }
     }
 }
