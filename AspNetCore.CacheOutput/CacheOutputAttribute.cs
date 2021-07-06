@@ -25,6 +25,7 @@ namespace AspNetCore.CacheOutput
         protected static string DefaultMediaType = "application/json; charset=utf-8";
         internal IModelQuery<DateTime, CacheTime> CacheTimeQuery;
         private int? sharedTimeSpan = null;
+        private const string OriginalStreamKey = "OriginalStream";
 
         /// <summary>
         /// Cache enabled only for requests when Thread.CurrentPrincipal is not set.
@@ -112,6 +113,8 @@ namespace AspNetCore.CacheOutput
                 return;
             }
 
+            SwapResponseBodyToMemoryStream(context);
+
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
             CacheKeyGeneratorFactory cacheKeyGeneratorFactory = serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
@@ -197,6 +200,12 @@ namespace AspNetCore.CacheOutput
             }
         }
 
+        private static void SwapResponseBodyToMemoryStream(ActionExecutingContext context)
+        {
+            context.HttpContext.Items.Add(OriginalStreamKey, context.HttpContext.Response.Body);
+            context.HttpContext.Response.Body = new MemoryStream();
+        }
+
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             await base.OnResultExecutionAsync(context, next);
@@ -210,11 +219,15 @@ namespace AspNetCore.CacheOutput
                 )
             )
             {
+                await SwapMemoryStreamBackToResponseBody(context);
+
                 return;
             }
 
             if (!IsCachingAllowed(context, AnonymousOnly))
             {
+                await SwapMemoryStreamBackToResponseBody(context);
+
                 return;
             }
 
@@ -280,6 +293,23 @@ namespace AspNetCore.CacheOutput
             }
 
             ApplyCacheHeaders(context.HttpContext.Response, cacheTime, actionExecutionTimestamp);
+
+            await SwapMemoryStreamBackToResponseBody(context);
+        }
+
+        private static async Task SwapMemoryStreamBackToResponseBody(ResultExecutingContext context)
+        {
+            if (context.HttpContext.Response.Body is MemoryStream &&
+                context.HttpContext.Items.ContainsKey(OriginalStreamKey))
+            {
+                var originalStream = context.HttpContext.Items[OriginalStreamKey] as Stream;
+
+                context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+
+                await context.HttpContext.Response.Body.CopyToAsync(originalStream);
+
+                context.HttpContext.Response.Body = originalStream;
+            }
         }
 
         protected virtual bool IsCachingAllowed(FilterContext actionContext, bool anonymousOnly)
