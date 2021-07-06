@@ -219,11 +219,15 @@ namespace AspNetCore.CacheOutput
                 )
             )
             {
+                await SwapMemoryStreamBackToResponseBody(context);
+
                 return;
             }
 
             if (!IsCachingAllowed(context, AnonymousOnly))
             {
+                await SwapMemoryStreamBackToResponseBody(context);
+
                 return;
             }
 
