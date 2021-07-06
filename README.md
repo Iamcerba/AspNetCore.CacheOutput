@@ -41,12 +41,6 @@ You can build from the source here, or you can install the Nuget version:
      ```csharp
      services.AddRedisCacheOutput(Configuration.GetConnectionString("<redis connection string name>"));
      ```
-     
-4. In "Startup" class "Configure" method **initialize cache output**:
-
-   ```csharp
-   app.UseCacheOutput();
-   ```
 
 Usage
 --------------------
