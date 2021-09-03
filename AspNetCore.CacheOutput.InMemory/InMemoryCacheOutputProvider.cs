@@ -43,7 +43,7 @@ namespace AspNetCore.CacheOutput.InMemory
             var options = new MemoryCacheEntryOptions()
                 .SetAbsoluteExpiration(expiration.Subtract(DateTimeOffset.Now));
 
-            if (string.IsNullOrEmpty(dependsOnKey))
+            if (string.IsNullOrEmpty(dependsOnKey) && !Cache.TryGetValue($"{dependsOnKey}{CancellationTokenKey}", out _))
             {
                 var cts = new CancellationTokenSource();
 
