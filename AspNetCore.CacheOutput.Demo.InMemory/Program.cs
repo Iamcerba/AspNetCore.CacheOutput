@@ -3,7 +3,7 @@ using System.Security.Principal;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace AspNetCore.CacheOutput.Demo.InMemory31
+namespace AspNetCore.CacheOutput.Demo.InMemory
 {
     public class Program
     {

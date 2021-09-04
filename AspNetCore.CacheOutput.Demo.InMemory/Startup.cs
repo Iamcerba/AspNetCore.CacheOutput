@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace AspNetCore.CacheOutput.Demo.InMemory31
+namespace AspNetCore.CacheOutput.Demo.InMemory
 {
     public class Startup
     {

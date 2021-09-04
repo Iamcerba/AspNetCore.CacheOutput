@@ -1,6 +1,6 @@
 using System;
 
-namespace AspNetCore.CacheOutput.Demo.InMemory31
+namespace AspNetCore.CacheOutput.Demo.InMemory
 {
     public class WeatherForecast
     {

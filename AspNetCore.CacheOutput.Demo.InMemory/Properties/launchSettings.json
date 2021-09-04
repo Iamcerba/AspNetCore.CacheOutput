@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "AspNetCore.CacheOutput.Demo.InMemory31": {
+    "AspNetCore.CacheOutput.Demo.InMemory": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",

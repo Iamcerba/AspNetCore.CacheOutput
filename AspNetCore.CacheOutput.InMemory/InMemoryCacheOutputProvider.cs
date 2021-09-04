@@ -45,13 +45,20 @@ namespace AspNetCore.CacheOutput.InMemory
 
             if (string.IsNullOrEmpty(dependsOnKey))
             {
-                var cts = new CancellationTokenSource();
+                if (Cache.TryGetValue($"{key}{CancellationTokenKey}", out CancellationTokenSource existingCts))
+                {
+                    options.AddExpirationToken(new CancellationChangeToken(existingCts.Token));
+                }
+                else
+                {
+                    var cts = new CancellationTokenSource();
 
-                options.AddExpirationToken(new CancellationChangeToken(cts.Token));
+                    options.AddExpirationToken(new CancellationChangeToken(cts.Token));
+
+                    Cache.Set($"{key}{CancellationTokenKey}", cts, options);
+                }
 
                 Cache.Set(key, value, options);
-
-                Cache.Set($"{key}{CancellationTokenKey}", cts, options);
             }
             else
             {

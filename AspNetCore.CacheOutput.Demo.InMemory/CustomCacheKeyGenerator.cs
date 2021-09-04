@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AspNetCore.CacheOutput.Demo.InMemory31
+namespace AspNetCore.CacheOutput.Demo.InMemory
 {
     public class CustomCacheKeyGenerator : DefaultCacheKeyGenerator
     {
