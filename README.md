@@ -203,7 +203,7 @@ public class TeamsController : Controller
 Obviously, multiple attributes are supported. You can also invalidate methods from separate controller:
 
 ```csharp
-[InvalidateCacheOutput(nameof(Get), typeof(OtherController))] // this will invalidate Get in a different controller
+[InvalidateCacheOutput(typeof(OtherController), nameof(Get))] // this will invalidate Get in a different controller
 [InvalidateCacheOutput(nameof(Get))] // this will invalidate Get in this controller
 public void Post(Team value)
 {
