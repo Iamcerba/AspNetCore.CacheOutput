@@ -10,16 +10,16 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
     <Description>InMemoryOutputCacheProvider for AspNetCore.CacheOutput package</Description>
-    <Version>2.0.0-pre2</Version>
+    <Version>2.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.1"/>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'net5.0'">
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
