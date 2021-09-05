@@ -16,20 +16,13 @@ namespace AspNetCore.CacheOutput
         private readonly Type cacheKeyGeneratorType;
 
         public InvalidateCacheOutputAttribute(string methodName, Type cacheKeyGeneratorType = default(Type))
+            : this(null, methodName, cacheKeyGeneratorType)
         {
-            if (cacheKeyGeneratorType != null && !typeof(ICacheKeyGenerator).IsAssignableFrom(cacheKeyGeneratorType))
-            {
-                throw new ArgumentException(nameof(cacheKeyGeneratorType));
-            }
-
-            this.controller = null;
-            this.methodName = methodName;
-            this.cacheKeyGeneratorType = cacheKeyGeneratorType;
         }
 
         public InvalidateCacheOutputAttribute(
-            string methodName,
             Type controllerType,
+            string methodName,
             Type cacheKeyGeneratorType = default(Type)
         )
         {

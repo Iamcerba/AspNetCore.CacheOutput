@@ -42,8 +42,8 @@ namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
         // PUT api/values/5
         [HttpPut("api/values/{id}")]
         [CacheOutput.Redis.InvalidateCacheOutput(
-            nameof(GetValue),
             typeof(ValuesController),
+            nameof(GetValue),
             null,
             "id"
         )] // Invalidating just cache related to this document
@@ -55,8 +55,8 @@ namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
         // DELETE api/values/5
         [HttpDelete("api/values/{id}")]
         [CacheOutput.Redis.InvalidateCacheOutput(
-            nameof(GetValue),
             typeof(ValuesController),
+            nameof(GetValue),
             null,
             "id"
         )] // Invalidating just cache related to this document
