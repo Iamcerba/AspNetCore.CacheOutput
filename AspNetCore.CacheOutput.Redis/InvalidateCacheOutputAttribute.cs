@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,8 +20,15 @@ namespace AspNetCore.CacheOutput.Redis
         private readonly string[] actionParameters;
 
         public InvalidateCacheOutputAttribute(string methodName, Type cacheKeyGeneratorType = default(Type))
-            : this(methodName, null, cacheKeyGeneratorType)
         {
+            if (cacheKeyGeneratorType != null && !typeof(ICacheKeyGenerator).IsAssignableFrom(cacheKeyGeneratorType))
+            {
+                throw new ArgumentException(nameof(cacheKeyGeneratorType));
+            }
+
+            this.controller = null;
+            this.methodName = methodName;
+            this.cacheKeyGeneratorType = cacheKeyGeneratorType;
         }
 
         public InvalidateCacheOutputAttribute(
@@ -30,6 +38,16 @@ namespace AspNetCore.CacheOutput.Redis
             params string[] actionParameters
         )
         {
+            if (controllerType != null && !typeof(ControllerBase).IsAssignableFrom(controllerType))
+            {
+                throw new ArgumentException(nameof(controllerType));
+            }
+
+            if (cacheKeyGeneratorType != null && !typeof(ICacheKeyGenerator).IsAssignableFrom(cacheKeyGeneratorType))
+            {
+                throw new ArgumentException(nameof(cacheKeyGeneratorType));
+            }
+
             this.controller = controllerType != null ? controllerType.FullName : null;
             this.methodName = methodName;
             this.cacheKeyGeneratorType = cacheKeyGeneratorType;

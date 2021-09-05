@@ -16,8 +16,15 @@ namespace AspNetCore.CacheOutput
         private readonly Type cacheKeyGeneratorType;
 
         public InvalidateCacheOutputAttribute(string methodName, Type cacheKeyGeneratorType = default(Type))
-            : this(methodName, null, cacheKeyGeneratorType)
         {
+            if (cacheKeyGeneratorType != null && !typeof(ICacheKeyGenerator).IsAssignableFrom(cacheKeyGeneratorType))
+            {
+                throw new ArgumentException(nameof(cacheKeyGeneratorType));
+            }
+
+            this.controller = null;
+            this.methodName = methodName;
+            this.cacheKeyGeneratorType = cacheKeyGeneratorType;
         }
 
         public InvalidateCacheOutputAttribute(
@@ -26,6 +33,16 @@ namespace AspNetCore.CacheOutput
             Type cacheKeyGeneratorType = default(Type)
         )
         {
+            if (controllerType != null && !controllerType.IsAssignableFrom(typeof(ControllerBase)))
+            {
+                throw new ArgumentException(nameof(controllerType));
+            }
+
+            if (cacheKeyGeneratorType != null && !cacheKeyGeneratorType.IsAssignableFrom(typeof(ICacheKeyGenerator)))
+            {
+                throw new ArgumentException(nameof(cacheKeyGeneratorType));
+            }
+
             this.controller = controllerType != null ? controllerType.FullName : null;
             this.methodName = methodName;
             this.cacheKeyGeneratorType = cacheKeyGeneratorType;

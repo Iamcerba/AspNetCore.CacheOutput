@@ -13,6 +13,11 @@ namespace AspNetCore.CacheOutput
 
         public ICacheKeyGenerator GetCacheKeyGenerator(Type cacheKeyGeneratorType)
         {
+            if (!cacheKeyGeneratorType.IsAssignableFrom(typeof(ICacheKeyGenerator)))
+            {
+                throw new ArgumentException(nameof(cacheKeyGeneratorType));
+            }
+
             Type generatorType = cacheKeyGeneratorType ?? typeof(ICacheKeyGenerator);
 
             ICacheKeyGenerator generator = serviceProvider.GetService(generatorType) as ICacheKeyGenerator;
