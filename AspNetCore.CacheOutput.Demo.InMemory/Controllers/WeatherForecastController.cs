@@ -23,13 +23,12 @@ namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
         }
 
         [HttpGet]
-        [CacheOutput(
+        [CacheOutputUntil(
             AnonymousOnly = true,
-            ClientTimeSpan = 0,
-            ServerTimeSpan = 3600,
+            ServerTimes = "20:46:00",
+            ClientTimes = "20:18:00",
             MustRevalidate = true,
-            ExcludeQueryStringFromCacheKey = false,
-            CacheKeyGenerator = typeof(CustomCacheKeyGenerator)
+            ExcludeQueryStringFromCacheKey = false
         )]
         public IEnumerable<WeatherForecast> Get()
         {
