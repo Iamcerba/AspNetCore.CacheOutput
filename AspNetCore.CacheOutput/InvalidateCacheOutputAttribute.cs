@@ -26,12 +26,12 @@ namespace AspNetCore.CacheOutput
             Type cacheKeyGeneratorType = default(Type)
         )
         {
-            if (controllerType != null && !controllerType.IsAssignableFrom(typeof(ControllerBase)))
+            if (controllerType != null && !typeof(ControllerBase).IsAssignableFrom(controllerType))
             {
                 throw new ArgumentException(nameof(controllerType));
             }
 
-            if (cacheKeyGeneratorType != null && !cacheKeyGeneratorType.IsAssignableFrom(typeof(ICacheKeyGenerator)))
+            if (cacheKeyGeneratorType != null && !typeof(ICacheKeyGenerator).IsAssignableFrom(cacheKeyGeneratorType))
             {
                 throw new ArgumentException(nameof(cacheKeyGeneratorType));
             }
