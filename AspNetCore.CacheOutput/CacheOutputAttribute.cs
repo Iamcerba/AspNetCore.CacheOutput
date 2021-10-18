@@ -130,7 +130,7 @@ namespace AspNetCore.CacheOutput
 
             if (!await cache.ContainsAsync(cacheKey))
             {
-                var result = await next();
+                ActionExecutedContext result = await next();
 
                 if (result.Exception != null)
                 {
@@ -168,7 +168,7 @@ namespace AspNetCore.CacheOutput
 
             if (val == null)
             {
-                var result = await next();
+                ActionExecutedContext result = await next();
 
                 if (result.Exception != null)
                 {
@@ -209,11 +209,11 @@ namespace AspNetCore.CacheOutput
                 ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
             }
         }
-  
+ 
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             await base.OnResultExecutionAsync(context, next);
-            
+
             if (
                 context.HttpContext.Response == null ||
                 context.HttpContext.Items[CurrentRequestSkipResultExecution] != null ||
