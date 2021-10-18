@@ -25,7 +25,7 @@ namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
         [HttpGet]
         [CacheOutput(
             AnonymousOnly = true,
-            ClientTimeSpan = 0,
+            ClientTimeSpan = 1800,
             ServerTimeSpan = 3600,
             MustRevalidate = true,
             ExcludeQueryStringFromCacheKey = false,

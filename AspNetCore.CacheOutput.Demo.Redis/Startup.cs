@@ -1,4 +1,5 @@
-﻿using AspNetCore.CacheOutput.Redis.Extensions;
+﻿using AspNetCore.CacheOutput.Extensions;
+using AspNetCore.CacheOutput.Redis.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +37,8 @@ namespace AspNetCore.CacheOutput.Demo.Redis
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCacheOutput();
 
             app.UseEndpoints(endpoints =>
             {
