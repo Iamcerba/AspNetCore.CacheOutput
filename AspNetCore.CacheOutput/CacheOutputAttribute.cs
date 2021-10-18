@@ -20,6 +20,7 @@ namespace AspNetCore.CacheOutput
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class CacheOutputAttribute : ActionFilterAttribute
     {
+        private const string OriginalStreamCacheKey = "CacheOutput:OriginalStream";
         private const string CurrentRequestCacheKey = "CacheOutput:CacheKey";
         private const string CurrentRequestSkipResultExecution = "CacheOutput:SkipResultExecutionKey";
         protected static string DefaultMediaType = "application/json; charset=utf-8";
@@ -111,6 +112,8 @@ namespace AspNetCore.CacheOutput
 
                 return;
             }
+
+            SwapResponseBodyToMemoryStream(context);
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
@@ -210,11 +213,15 @@ namespace AspNetCore.CacheOutput
                 )
             )
             {
+                await SwapMemoryStreamToResponseBody(context);
+
                 return;
             }
 
             if (!IsCachingAllowed(context, AnonymousOnly))
             {
+                await SwapMemoryStreamToResponseBody(context);
+
                 return;
             }
 
@@ -280,6 +287,8 @@ namespace AspNetCore.CacheOutput
             }
 
             ApplyCacheHeaders(context.HttpContext.Response, cacheTime, actionExecutionTimestamp);
+
+            await SwapMemoryStreamToResponseBody(context);
         }
 
         protected virtual bool IsCachingAllowed(FilterContext actionContext, bool anonymousOnly)
@@ -375,6 +384,30 @@ namespace AspNetCore.CacheOutput
         protected virtual string CreateEtag()
         {
             return Guid.NewGuid().ToString();
+        }
+
+        private static void SwapResponseBodyToMemoryStream(ActionExecutingContext context)
+        {
+            context.HttpContext.Items.Add(OriginalStreamCacheKey, context.HttpContext.Response.Body);
+            context.HttpContext.Response.Body = new MemoryStream();
+        }
+
+        private static async Task SwapMemoryStreamToResponseBody(ResultExecutingContext context)
+        {
+            if (
+                context.HttpContext.Response.Body is MemoryStream
+                    && context.HttpContext.Items.ContainsKey(OriginalStreamCacheKey)
+                    && context.HttpContext.Items[OriginalStreamCacheKey] is Stream originalStream
+            )
+            {
+                context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+
+                await context.HttpContext.Response.Body.CopyToAsync(originalStream);
+
+                await context.HttpContext.Response.Body.DisposeAsync();
+
+                context.HttpContext.Response.Body = originalStream;
+            }
         }
 
         private static void SetEtag(HttpResponse response, string etag)

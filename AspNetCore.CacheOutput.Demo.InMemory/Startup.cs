@@ -1,4 +1,3 @@
-using AspNetCore.CacheOutput.Extensions;
 using AspNetCore.CacheOutput.InMemory.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,8 +39,6 @@ namespace AspNetCore.CacheOutput.Demo.InMemory
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseCacheOutput();
 
             app.UseEndpoints(endpoints =>
             {
