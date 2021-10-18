@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AspNetCore.CacheOutput.Demo.InMemory.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -42,6 +43,15 @@ namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet("error")]
+        // Returns empty response on exception
+        // Without cache returns: {"status":2,"good":false,"log":"abc"}
+        [CacheOutput]
+        public IEnumerable<WeatherForecast> GetError()
+        {
+            throw new BusinessException("abc");
         }
     }
 }
