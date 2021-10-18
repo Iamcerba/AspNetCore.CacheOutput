@@ -130,7 +130,12 @@ namespace AspNetCore.CacheOutput
 
             if (!await cache.ContainsAsync(cacheKey))
             {
-                await next();
+                var result = await next();
+
+                if (result.Exception != null)
+                {
+                    await SwapMemoryStreamToResponseBody(context);
+                }
 
                 return;
             }
@@ -163,7 +168,12 @@ namespace AspNetCore.CacheOutput
 
             if (val == null)
             {
-                await next();
+                var result = await next();
+
+                if (result.Exception != null)
+                {
+                    await SwapMemoryStreamToResponseBody(context);
+                }
 
                 return;
             }
@@ -199,11 +209,11 @@ namespace AspNetCore.CacheOutput
                 ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
             }
         }
-
+  
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             await base.OnResultExecutionAsync(context, next);
-
+            
             if (
                 context.HttpContext.Response == null ||
                 context.HttpContext.Items[CurrentRequestSkipResultExecution] != null ||
@@ -386,13 +396,13 @@ namespace AspNetCore.CacheOutput
             return Guid.NewGuid().ToString();
         }
 
-        private static void SwapResponseBodyToMemoryStream(ActionExecutingContext context)
+        private static void SwapResponseBodyToMemoryStream(ActionContext context)
         {
             context.HttpContext.Items.Add(OriginalStreamCacheKey, context.HttpContext.Response.Body);
             context.HttpContext.Response.Body = new MemoryStream();
         }
 
-        private static async Task SwapMemoryStreamToResponseBody(ResultExecutingContext context)
+        private static async Task SwapMemoryStreamToResponseBody(ActionContext context)
         {
             if (
                 context.HttpContext.Response.Body is MemoryStream
