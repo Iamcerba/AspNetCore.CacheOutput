@@ -215,6 +215,7 @@ namespace AspNetCore.CacheOutput
             await base.OnResultExecutionAsync(context, next);
 
             if (
+                context.HttpContext.RequestAborted.IsCancellationRequested ||
                 context.HttpContext.Response == null ||
                 context.HttpContext.Items[CurrentRequestSkipResultExecution] != null ||
                 !(
