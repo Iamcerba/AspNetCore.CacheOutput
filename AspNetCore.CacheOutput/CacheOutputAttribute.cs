@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AspNetCore.CacheOutput.Time;
 using Microsoft.AspNetCore.Http;
@@ -142,9 +143,16 @@ namespace AspNetCore.CacheOutput
 
             context.HttpContext.Items[CurrentRequestSkipResultExecution] = true;
 
+            var responseAdditionalDataJsonUtf8Bytes = 
+                await cache.GetAsync<byte[]>(cacheKey + Constants.ResponseAdditionalDataKey);
+
+            var responseAdditionalData = DeserializeResponseAdditionalDataFromJsonUtf8Bytes(
+                responseAdditionalDataJsonUtf8Bytes
+            );
+
             if (context.HttpContext.Request.Headers[HeaderNames.IfNoneMatch].Any())
             {
-                string etag = await cache.GetAsync<string>(cacheKey + Constants.EtagKey);
+                string etag = responseAdditionalData?.Etag;
 
                 if (etag != null)
                 {
@@ -180,13 +188,13 @@ namespace AspNetCore.CacheOutput
 
             await context.HttpContext.Response.Body.WriteAsync(val, 0, val.Length);
 
-            string contentType = await cache.GetAsync<string>(cacheKey + Constants.ContentTypeKey) ?? expectedMediaType;
+            string contentType = responseAdditionalData?.ContentType ?? expectedMediaType;
 
             context.HttpContext.Response.Headers[HeaderNames.ContentType] = contentType;
 
-            context.HttpContext.Response.StatusCode = StatusCodes.Status200OK;
+            context.HttpContext.Response.StatusCode = responseAdditionalData?.StatusCode ?? StatusCodes.Status200OK;
 
-            string responseEtag = await cache.GetAsync<string>(cacheKey + Constants.EtagKey);
+            string responseEtag = responseAdditionalData?.Etag;
 
             if (responseEtag != null)
             {
@@ -195,21 +203,11 @@ namespace AspNetCore.CacheOutput
 
             CacheTime cacheTime = CacheTimeQuery.Execute(DateTime.Now);
 
-            if (
-                DateTimeOffset.TryParse(
-                    await cache.GetAsync<string>(cacheKey + Constants.LastModifiedKey),
-                    out DateTimeOffset lastModified
-                )
-            )
-            {
-                ApplyCacheHeaders(context.HttpContext.Response, cacheTime, lastModified);
-            }
-            else
-            {
-                ApplyCacheHeaders(context.HttpContext.Response, cacheTime);
-            }
+            DateTimeOffset? lastModified = responseAdditionalData?.LastModified;
+
+            ApplyCacheHeaders(context.HttpContext.Response, cacheTime, lastModified);
         }
- 
+
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             await base.OnResultExecutionAsync(context, next);
@@ -272,23 +270,19 @@ namespace AspNetCore.CacheOutput
                             await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
                             await cache.AddAsync(cacheKey, content, cacheTime.AbsoluteExpiration, baseKey);
 
-                            await cache.AddAsync(
-                                cacheKey + Constants.ContentTypeKey,
-                                contentType,
-                                cacheTime.AbsoluteExpiration,
-                                baseKey
-                            );
+                            var responseAdditionalData = new ResponseAdditionalData() {
+                                StatusCode = context.HttpContext.Response.StatusCode,
+                                ContentType = contentType,
+                                Etag = etag,
+                                LastModified = actionExecutionTimestamp
+                            };
+
+                            byte[] responseAdditionalDataUtf8Bytes = 
+                                SerializeResponseAdditionalDataToJsonUtf8Bytes(responseAdditionalData);
 
                             await cache.AddAsync(
-                                cacheKey + Constants.EtagKey,
-                                etag,
-                                cacheTime.AbsoluteExpiration,
-                                baseKey
-                            );
-
-                            await cache.AddAsync(
-                                cacheKey + Constants.LastModifiedKey,
-                                actionExecutionTimestamp.ToString(),
+                                cacheKey + Constants.ResponseAdditionalDataKey,
+                                JsonSerializer.SerializeToUtf8Bytes(responseAdditionalData),
                                 cacheTime.AbsoluteExpiration,
                                 baseKey
                             );
@@ -427,6 +421,22 @@ namespace AspNetCore.CacheOutput
             {
                 response.Headers[HeaderNames.ETag] = @"""" + etag.Replace("\"", string.Empty) + @"""";
             }
+        }
+
+        private byte[] SerializeResponseAdditionalDataToJsonUtf8Bytes(
+            ResponseAdditionalData responseAdditionalData
+        )
+        {
+            return JsonSerializer.SerializeToUtf8Bytes(responseAdditionalData);
+        }
+
+        private ResponseAdditionalData DeserializeResponseAdditionalDataFromJsonUtf8Bytes(
+            byte[] responseAdditionalDataJsonUtf8Bytes
+        )
+        {
+            var utf8Reader = new Utf8JsonReader(responseAdditionalDataJsonUtf8Bytes);
+
+            return JsonSerializer.Deserialize<ResponseAdditionalData>(ref utf8Reader);
         }
     }
 }
