@@ -34,7 +34,8 @@ namespace AspNetCore.CacheOutput
         public bool AnonymousOnly { get; set; }
 
         /// <summary>
-        /// Corresponds to MustRevalidate HTTP header - indicates whether the origin server requires revalidation of a cache entry on any subsequent use when the cache entry becomes stale.
+        /// Corresponds to MustRevalidate HTTP header - indicates whether the origin server requires revalidation of
+        /// a cache entry on any subsequent use when the cache entry becomes stale.
         /// </summary>
         public bool MustRevalidate { get; set; }
 
@@ -76,7 +77,8 @@ namespace AspNetCore.CacheOutput
         public bool NoCache { get; set; }
 
         /// <summary>
-        /// Corresponds to CacheControl Private HTTP header. Response can be cached by browser but not by intermediary cache.
+        /// Corresponds to CacheControl Private HTTP header. Response can be cached by browser
+        /// but not by intermediary cache.
         /// </summary>
         public bool Private { get; set; }
 
@@ -86,7 +88,8 @@ namespace AspNetCore.CacheOutput
         public Type CacheKeyGenerator { get; set; }
 
         /// <summary>
-        /// If set to something else than an empty string, this value will always be used for the Content-Type header, regardless of content negotiation.
+        /// If set to something else than an empty string, this value will always be used for the Content-Type header,
+        /// regardless of content negotiation.
         /// </summary>
         public string MediaType { get; set; }
 
@@ -118,14 +121,20 @@ namespace AspNetCore.CacheOutput
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-            CacheKeyGeneratorFactory cacheKeyGeneratorFactory = serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
-            ICacheKeyGenerator cacheKeyGenerator = cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
+            CacheKeyGeneratorFactory cacheKeyGeneratorFactory = 
+                serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
+            ICacheKeyGenerator cacheKeyGenerator = 
+                cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
 
             EnsureCacheTimeQuery();
 
             string expectedMediaType = GetExpectedMediaType(context);
 
-            string cacheKey = cacheKeyGenerator.MakeCacheKey(context, expectedMediaType, ExcludeQueryStringFromCacheKey);
+            string cacheKey = cacheKeyGenerator.MakeCacheKey(
+                context,
+                expectedMediaType,
+                ExcludeQueryStringFromCacheKey
+            );
 
             context.HttpContext.Items[CurrentRequestCacheKey] = cacheKey;
 
@@ -241,8 +250,10 @@ namespace AspNetCore.CacheOutput
             {
                 IServiceProvider serviceProvider = context.HttpContext.RequestServices;
                 IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-                CacheKeyGeneratorFactory cacheKeyGeneratorFactory = serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
-                ICacheKeyGenerator cacheKeyGenerator = cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
+                CacheKeyGeneratorFactory cacheKeyGeneratorFactory = 
+                    serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
+                ICacheKeyGenerator cacheKeyGenerator = 
+                    cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
 
                 string cacheKey = context.HttpContext.Items[CurrentRequestCacheKey] as string;
 
@@ -332,7 +343,8 @@ namespace AspNetCore.CacheOutput
             }
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
-            IOptions<MvcOptions> options = serviceProvider.GetService(typeof(IOptions<MvcOptions>)) as IOptions<MvcOptions>;
+            IOptions<MvcOptions> options = 
+                serviceProvider.GetService(typeof(IOptions<MvcOptions>)) as IOptions<MvcOptions>;
 
             if (options != null)
             {
@@ -353,7 +365,13 @@ namespace AspNetCore.CacheOutput
                                 .Cast<OutputFormatter>()
                                 .ToList();
 
-                            if (outputFormatters.Any(e => e.SupportedMediaTypes.Any(t => t.ToLower() == mediaType.ToLower())))
+                            if (
+                                outputFormatters.Any(
+                                    e => e.SupportedMediaTypes.Any(
+                                        t => t.ToLower() == mediaType.ToLower()
+                                    )
+                                )
+                            )
                             {
                                 return mediaType;
                             }
@@ -365,7 +383,11 @@ namespace AspNetCore.CacheOutput
             return DefaultMediaType;
         }
 
-        protected virtual void ApplyCacheHeaders(HttpResponse response, CacheTime cacheTime, DateTimeOffset? lastModified = null)
+        protected virtual void ApplyCacheHeaders(
+            HttpResponse response,
+            CacheTime cacheTime,
+            DateTimeOffset? lastModified = null
+        )
         {
             if (cacheTime.ClientTimeSpan > TimeSpan.Zero || MustRevalidate || Private)
             {
