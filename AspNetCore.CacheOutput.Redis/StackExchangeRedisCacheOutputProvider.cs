@@ -10,6 +10,8 @@ namespace AspNetCore.CacheOutput.Redis
 {
     public class StackExchangeRedisCacheOutputProvider : IApiCacheOutput
     {
+        private const string WildcardCharacter = "*";
+
         private readonly IDatabase redisCache;
 
         public StackExchangeRedisCacheOutputProvider(IDatabase redisCache)
@@ -19,7 +21,7 @@ namespace AspNetCore.CacheOutput.Redis
 
         public async Task RemoveStartsWithAsync(string key)
         {
-            if (key.Contains("*"))
+            if (key.Contains(WildcardCharacter))
             {
                 // Partial cache invalidation using wildcards
                 EndPoint[] endPoints = redisCache.Multiplexer.GetEndPoints();
@@ -29,7 +31,7 @@ namespace AspNetCore.CacheOutput.Redis
                     IServer server = redisCache.Multiplexer.GetServer(endPoint);
 
                     IList<RedisKey> keys = server
-                        .Keys(pattern: $"{key}")
+                        .Keys(pattern: key)
                         .ToList();
 
                     foreach (RedisKey memberKey in keys)
@@ -53,15 +55,7 @@ namespace AspNetCore.CacheOutput.Redis
 
         public async Task<T> GetAsync<T>(string key) where T : class
         {
-            T result = await redisCache.GetAsync<T>(key);
-
-            if (typeof(T) == typeof(byte[]))
-            {
-                // GZip decompression
-                return (T)Convert.ChangeType(((byte[])(object)result).Decompress(), typeof(T));
-            }
-
-            return result;
+            return await redisCache.GetAsync<T>(key);
         }
 
         public Task RemoveAsync(string key)
@@ -71,7 +65,7 @@ namespace AspNetCore.CacheOutput.Redis
 
         public async Task<bool> ContainsAsync(string key)
         {
-            if (key.Contains("*"))
+            if (key.Contains(WildcardCharacter))
             {
                 EndPoint[] endPoints = redisCache.Multiplexer.GetEndPoints();
 
@@ -80,7 +74,7 @@ namespace AspNetCore.CacheOutput.Redis
                     IServer server = redisCache.Multiplexer.GetServer(endPoint);
 
                     IList<RedisKey> keys = server
-                        .Keys(pattern: $"{key}")
+                        .Keys(pattern: key)
                         .ToList();
 
                     if (keys.Any())
@@ -101,14 +95,6 @@ namespace AspNetCore.CacheOutput.Redis
             if (Equals(value, string.Empty))
             {
                 return;
-            }
-
-            byte[] byteArray = value as byte[];
-
-            if (byteArray != null)
-            {
-                // GZip compression 
-                value = byteArray.Compress();
             }
 
             bool primaryAdded = await redisCache.SetAsync(key, value, expiration.Subtract(DateTimeOffset.Now));
