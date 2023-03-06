@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -76,8 +76,14 @@ namespace AspNetCore.CacheOutput
 
         /// <summary>
         /// Corresponds to CacheControl Private HTTP header. Response can be cached by browser but not by intermediary cache.
+        /// NOTE: This is defaulted to true for backwards compatibility (it was always locked to private previously) 
         /// </summary>
-        public bool Private { get; set; }
+        public bool Private { get; set; } = true;
+        
+        /// <summary>
+        /// CacheControl explicit public 
+        /// </summary>
+        public bool Public { get; set; }
 
         /// <summary>
         /// Class used to generate caching keys
@@ -100,7 +106,6 @@ namespace AspNetCore.CacheOutput
             {
                 throw new ArgumentNullException(nameof(next));
             }
-
             if (context.Result != null)
             {
                 return;
@@ -373,12 +378,18 @@ namespace AspNetCore.CacheOutput
 
         protected virtual void ApplyCacheHeaders(HttpResponse response, CacheTime cacheTime, DateTimeOffset? lastModified = null)
         {
-            if (cacheTime.ClientTimeSpan > TimeSpan.Zero || MustRevalidate || Private)
+            if (cacheTime.ClientTimeSpan > TimeSpan.Zero || MustRevalidate)
             {
-                response.Headers[HeaderNames.CacheControl] =
-                    $"private,max-age={cacheTime.ClientTimeSpan.TotalSeconds}" +
-                    $"{(cacheTime.SharedTimeSpan != null ? $",s-maxage={cacheTime.SharedTimeSpan.Value.TotalSeconds}" : string.Empty)}" +
-                    $"{(MustRevalidate ? ",must-revalidate" : string.Empty)}";
+                var cacheControl = new CacheControlHeaderValue
+                {
+                    MaxAge = cacheTime.ClientTimeSpan,
+                    SharedMaxAge = cacheTime.SharedTimeSpan,
+                    MustRevalidate = MustRevalidate,
+                    Private = Private,
+                    Public = Public,
+                };
+
+                response.Headers[HeaderNames.CacheControl] = cacheControl.ToString();
             }
             else if (NoCache)
             {
