@@ -373,7 +373,7 @@ namespace AspNetCore.CacheOutput
 
         protected virtual void ApplyCacheHeaders(HttpResponse response, CacheTime cacheTime, DateTimeOffset? lastModified = null)
         {
-            if (cacheTime.ClientTimeSpan > TimeSpan.Zero || MustRevalidate)
+            if (cacheTime.ClientTimeSpan > TimeSpan.Zero || cacheTime.SharedTimeSpan > TimeSpan.Zero || MustRevalidate)
             {
                 var cacheControl = new CacheControlHeaderValue
                 {
