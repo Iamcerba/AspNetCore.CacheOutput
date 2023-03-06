@@ -76,13 +76,9 @@ namespace AspNetCore.CacheOutput
 
         /// <summary>
         /// Corresponds to CacheControl Private HTTP header. Response can be cached by browser but not by intermediary cache.
+        /// NOTE: Default to true as it was previously forced to always be private in the header (backwards compat)
         /// </summary>
-        public bool? Private { get; set; }
-        
-        /// <summary>
-        /// CacheControl explicit public 
-        /// </summary>
-        public bool? Public { get; set; }
+        public bool Private { get; set; } = true;
 
         /// <summary>
         /// Class used to generate caching keys
@@ -379,16 +375,13 @@ namespace AspNetCore.CacheOutput
         {
             if (cacheTime.ClientTimeSpan > TimeSpan.Zero || MustRevalidate)
             {
-                // This is for backwards compat - previously private modifier was always forced on.
-                var isPrivate = !Public.HasValue && !Private.HasValue;
-
                 var cacheControl = new CacheControlHeaderValue
                 {
                     MaxAge = cacheTime.ClientTimeSpan,
                     SharedMaxAge = cacheTime.SharedTimeSpan,
                     MustRevalidate = MustRevalidate,
-                    Private = isPrivate || (Private ?? false),
-                    Public = Public ?? false,
+                    Private = Private,
+                    Public = !Private,
                 };
 
                 response.Headers[HeaderNames.CacheControl] = cacheControl.ToString();
