@@ -35,8 +35,6 @@ namespace AspNetCore.CacheOutput.Time
                 )
             };
 
-            cacheTime.ClientTimeSpan = cacheTime.AbsoluteExpiration.Subtract(model);
-
             return cacheTime;
         }
     }
