@@ -5,10 +5,10 @@ namespace AspNetCore.CacheOutput.Time
     public class ShortTime : IModelQuery<DateTime, CacheTime>
     {
         private readonly int serverTimeInSeconds;
-        private readonly int clientTimeInSeconds;
+        private readonly int? clientTimeInSeconds;
         private readonly int? sharedTimeInSecounds;
 
-        public ShortTime(int serverTimeInSeconds, int clientTimeInSeconds, int? sharedTimeInSecounds)
+        public ShortTime(int serverTimeInSeconds, int? clientTimeInSeconds, int? sharedTimeInSecounds)
         {
             if (serverTimeInSeconds < 0)
             {
@@ -17,7 +17,7 @@ namespace AspNetCore.CacheOutput.Time
 
             this.serverTimeInSeconds = serverTimeInSeconds;
 
-            if (clientTimeInSeconds < 0)
+            if (clientTimeInSeconds.HasValue && clientTimeInSeconds.Value < 0)
             {
                 clientTimeInSeconds = 0;
             }
@@ -37,7 +37,9 @@ namespace AspNetCore.CacheOutput.Time
             var cacheTime = new CacheTime
             {
                 AbsoluteExpiration = model.AddSeconds(serverTimeInSeconds),
-                ClientTimeSpan = TimeSpan.FromSeconds(clientTimeInSeconds),
+                ClientTimeSpan = clientTimeInSeconds.HasValue ?
+                    (TimeSpan?)TimeSpan.FromSeconds(clientTimeInSeconds.Value) :
+                    null,
                 SharedTimeSpan = sharedTimeInSecounds.HasValue ? 
                     (TimeSpan?)TimeSpan.FromSeconds(sharedTimeInSecounds.Value) : 
                     null

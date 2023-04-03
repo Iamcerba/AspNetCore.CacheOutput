@@ -24,8 +24,14 @@ namespace AspNetCore.CacheOutput
         private const string OriginalStreamCacheKey = "CacheOutput:OriginalStream";
         private const string CurrentRequestCacheKey = "CacheOutput:CacheKey";
         private const string CurrentRequestSkipResultExecution = "CacheOutput:SkipResultExecutionKey";
+        private const string ClientTimeSpanGetterValidationMessage = "Should not be called without value set";
+        private const string SharedTimeSpanGetterValidationMessage = ClientTimeSpanGetterValidationMessage;
+
         protected static string DefaultMediaType = "application/json; charset=utf-8";
+
         internal IModelQuery<DateTime, CacheTime> CacheTimeQuery;
+
+        private int? clientTimeSpan = null;
         private int? sharedTimeSpan = null;
 
         /// <summary>
@@ -52,7 +58,19 @@ namespace AspNetCore.CacheOutput
         /// <summary>
         /// Corresponds to CacheControl MaxAge HTTP header (in seconds).
         /// </summary>
-        public int ClientTimeSpan { get; set; }
+        public int ClientTimeSpan
+        {
+            get
+            {
+                if (!clientTimeSpan.HasValue)
+                {
+                    throw new Exception(ClientTimeSpanGetterValidationMessage);
+                }
+
+                return clientTimeSpan.Value;
+            }
+            set => clientTimeSpan = value;
+        }
 
         /// <summary>
         /// Corresponds to CacheControl Shared MaxAge HTTP header (in seconds).
@@ -63,7 +81,7 @@ namespace AspNetCore.CacheOutput
             {
                 if (!sharedTimeSpan.HasValue)
                 {
-                    throw new Exception("Should not be called without value set");
+                    throw new Exception(SharedTimeSpanGetterValidationMessage);
                 }
 
                 return sharedTimeSpan.Value;
@@ -81,6 +99,13 @@ namespace AspNetCore.CacheOutput
         /// but not by intermediary cache.
         /// </summary>
         public bool Private { get; set; }
+
+        /// <summary>
+        /// Corresponds to CacheControl Public HTTP header. The "public" response directive indicates that any cache 
+        /// MAY store the response, even if the response would normally be non-cacheable or cacheable only within 
+        /// a private cache.
+        /// </summary>
+        public bool Public { get; set; }
 
         /// <summary>
         /// Class used to generate caching keys
@@ -332,7 +357,7 @@ namespace AspNetCore.CacheOutput
 
         protected void ResetCacheTimeQuery()
         {
-            CacheTimeQuery = new ShortTime(ServerTimeSpan, ClientTimeSpan, sharedTimeSpan);
+            CacheTimeQuery = new ShortTime(ServerTimeSpan, clientTimeSpan, sharedTimeSpan);
         }
 
         protected virtual string GetExpectedMediaType(ActionContext context)
@@ -389,16 +414,23 @@ namespace AspNetCore.CacheOutput
             DateTimeOffset? lastModified = null
         )
         {
-            if (cacheTime.ClientTimeSpan > TimeSpan.Zero || MustRevalidate || Private)
+            var cacheControl = new CacheControlHeaderValue
             {
-                response.Headers[HeaderNames.CacheControl] =
-                    $"private,max-age={cacheTime.ClientTimeSpan.TotalSeconds}" +
-                    $"{(cacheTime.SharedTimeSpan != null ? $",s-maxage={cacheTime.SharedTimeSpan.Value.TotalSeconds}" : string.Empty)}" +
-                    $"{(MustRevalidate ? ",must-revalidate" : string.Empty)}";
+                MaxAge = cacheTime.ClientTimeSpan,
+                SharedMaxAge = cacheTime.SharedTimeSpan,
+                MustRevalidate = MustRevalidate,
+                Private = Private,
+                Public = Public,
+                NoCache = NoCache
+            };
+
+            string cacheControlHeader = cacheControl.ToString();
+
+            if (!string.IsNullOrEmpty(cacheControlHeader)) {
+                response.Headers[HeaderNames.CacheControl] = cacheControlHeader;
             }
-            else if (NoCache)
-            {
-                response.Headers[HeaderNames.CacheControl] = "no-cache";
+
+            if (NoCache) {
                 response.Headers[HeaderNames.Pragma] = "no-cache";
             }
 
