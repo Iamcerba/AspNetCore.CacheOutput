@@ -31,6 +31,9 @@ namespace AspNetCore.CacheOutput
 
         internal IModelQuery<DateTime, CacheTime> CacheTimeQuery;
 
+        private int? clientTimeSpan = null;
+        private int? sharedTimeSpan = null;
+
         /// <summary>
         /// Cache enabled only for requests when Thread.CurrentPrincipal is not set.
         /// </summary>
@@ -52,8 +55,6 @@ namespace AspNetCore.CacheOutput
         /// </summary>
         public int ServerTimeSpan { get; set; }
 
-        private int? clientTimeSpan = null;
-
         /// <summary>
         /// Corresponds to CacheControl MaxAge HTTP header (in seconds).
         /// </summary>
@@ -70,8 +71,6 @@ namespace AspNetCore.CacheOutput
             }
             set => clientTimeSpan = value;
         }
-
-        private int? sharedTimeSpan = null;
 
         /// <summary>
         /// Corresponds to CacheControl Shared MaxAge HTTP header (in seconds).
