@@ -99,7 +99,7 @@ namespace AspNetCore.CacheOutput
         /// Corresponds to CacheControl Private HTTP header. Response can be cached by browser
         /// but not by intermediary cache.
         /// </summary>
-        public bool Private { get; set; } = true;
+        public bool Private { get; set; }
 
         /// <summary>
         /// Corresponds to CacheControl Public HTTP header. The "public" response directive indicates that any cache 
