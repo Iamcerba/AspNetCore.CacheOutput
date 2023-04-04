@@ -166,12 +166,7 @@ namespace AspNetCore.CacheOutput
 
             if (!await cache.ContainsAsync(cacheKey))
             {
-                ActionExecutedContext result = await next();
-
-                if (result.Exception != null)
-                {
-                    await SwapMemoryStreamToResponseBody(context);
-                }
+                await ExecuteNextMiddleware(context, next);
 
                 return;
             }
@@ -180,6 +175,13 @@ namespace AspNetCore.CacheOutput
 
             var responseAdditionalDataJsonUtf8Bytes = 
                 await cache.GetAsync<byte[]>(cacheKey + ResponseAdditionalDataCacheKeyPostfix);
+
+            if (responseAdditionalDataJsonUtf8Bytes == null)
+            {
+                await ExecuteNextMiddleware(context, next);
+
+                return;
+            }
 
             ResponseAdditionalData responseAdditionalData = DeserializeResponseAdditionalDataFromJsonUtf8Bytes(
                 responseAdditionalDataJsonUtf8Bytes
@@ -211,12 +213,7 @@ namespace AspNetCore.CacheOutput
 
             if (val == null)
             {
-                ActionExecutedContext result = await next();
-
-                if (result.Exception != null)
-                {
-                    await SwapMemoryStreamToResponseBody(context);
-                }
+                await ExecuteNextMiddleware(context, next);
 
                 return;
             }
@@ -444,6 +441,16 @@ namespace AspNetCore.CacheOutput
         protected virtual string CreateEtag()
         {
             return Guid.NewGuid().ToString();
+        }
+
+        private async Task ExecuteNextMiddleware(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            ActionExecutedContext result = await next();
+
+            if (result.Exception != null)
+            {
+                await SwapMemoryStreamToResponseBody(context);
+            }
         }
 
         private static void SwapResponseBodyToMemoryStream(ActionContext context)

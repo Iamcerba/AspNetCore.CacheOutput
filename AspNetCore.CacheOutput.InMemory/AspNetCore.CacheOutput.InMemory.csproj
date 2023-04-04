@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.CacheOutput" Version="2.1.0" />
-    <PackageReference Include="AspNetCore.CacheOutput" Version="3.0.0-pre2" />
+    <PackageReference Include="AspNetCore.CacheOutput" Version="3.0.0-pre3" />
   </ItemGroup>
 
 </Project>
