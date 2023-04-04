@@ -21,11 +21,12 @@ namespace AspNetCore.CacheOutput
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class CacheOutputAttribute : ActionFilterAttribute
     {
-        private const string OriginalStreamCacheKey = "CacheOutput:OriginalStream";
-        private const string CurrentRequestCacheKey = "CacheOutput:CacheKey";
-        private const string CurrentRequestSkipResultExecution = "CacheOutput:SkipResultExecutionKey";
+        private const string OriginalStreamHttpContextItemsKey = "CacheOutput:OriginalStream";
+        private const string CacheKeyHttpContextItemsKey = "CacheOutput:CacheKey";
+        private const string SkipResultExecutionHttpContextItemsKey = "CacheOutput:SkipResultExecution";
         private const string ClientTimeSpanGetterValidationMessage = "Should not be called without value set";
         private const string SharedTimeSpanGetterValidationMessage = ClientTimeSpanGetterValidationMessage;
+        private const string ResponseAdditionalDataCacheKeyPostfix = ":additional-data";
 
         protected static string DefaultMediaType = "application/json; charset=utf-8";
 
@@ -161,7 +162,7 @@ namespace AspNetCore.CacheOutput
                 ExcludeQueryStringFromCacheKey
             );
 
-            context.HttpContext.Items[CurrentRequestCacheKey] = cacheKey;
+            context.HttpContext.Items[CacheKeyHttpContextItemsKey] = cacheKey;
 
             if (!await cache.ContainsAsync(cacheKey))
             {
@@ -175,12 +176,12 @@ namespace AspNetCore.CacheOutput
                 return;
             }
 
-            context.HttpContext.Items[CurrentRequestSkipResultExecution] = true;
+            context.HttpContext.Items[SkipResultExecutionHttpContextItemsKey] = true;
 
             var responseAdditionalDataJsonUtf8Bytes = 
-                await cache.GetAsync<byte[]>(cacheKey + Constants.ResponseAdditionalDataKey);
+                await cache.GetAsync<byte[]>(cacheKey + ResponseAdditionalDataCacheKeyPostfix);
 
-            var responseAdditionalData = DeserializeResponseAdditionalDataFromJsonUtf8Bytes(
+            ResponseAdditionalData responseAdditionalData = DeserializeResponseAdditionalDataFromJsonUtf8Bytes(
                 responseAdditionalDataJsonUtf8Bytes
             );
 
@@ -249,7 +250,7 @@ namespace AspNetCore.CacheOutput
             if (
                 context.HttpContext.RequestAborted.IsCancellationRequested ||
                 context.HttpContext.Response == null ||
-                context.HttpContext.Items[CurrentRequestSkipResultExecution] != null ||
+                context.HttpContext.Items[SkipResultExecutionHttpContextItemsKey] != null ||
                 !(
                     context.HttpContext.Response.StatusCode >= (int)HttpStatusCode.OK &&
                     context.HttpContext.Response.StatusCode < (int)HttpStatusCode.Ambiguous
@@ -280,7 +281,7 @@ namespace AspNetCore.CacheOutput
                 ICacheKeyGenerator cacheKeyGenerator = 
                     cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
 
-                string cacheKey = context.HttpContext.Items[CurrentRequestCacheKey] as string;
+                string cacheKey = context.HttpContext.Items[CacheKeyHttpContextItemsKey] as string;
 
                 if (!string.IsNullOrWhiteSpace(cacheKey))
                 {
@@ -317,7 +318,7 @@ namespace AspNetCore.CacheOutput
                                 SerializeResponseAdditionalDataToJsonUtf8Bytes(responseAdditionalData);
 
                             await cache.AddAsync(
-                                cacheKey + Constants.ResponseAdditionalDataKey,
+                                cacheKey + ResponseAdditionalDataCacheKeyPostfix,
                                 JsonSerializer.SerializeToUtf8Bytes(responseAdditionalData),
                                 cacheTime.AbsoluteExpiration,
                                 baseKey
@@ -447,7 +448,7 @@ namespace AspNetCore.CacheOutput
 
         private static void SwapResponseBodyToMemoryStream(ActionContext context)
         {
-            context.HttpContext.Items.Add(OriginalStreamCacheKey, context.HttpContext.Response.Body);
+            context.HttpContext.Items.Add(OriginalStreamHttpContextItemsKey, context.HttpContext.Response.Body);
             context.HttpContext.Response.Body = new MemoryStream();
         }
 
@@ -455,8 +456,8 @@ namespace AspNetCore.CacheOutput
         {
             if (
                 context.HttpContext.Response.Body is MemoryStream
-                    && context.HttpContext.Items.ContainsKey(OriginalStreamCacheKey)
-                    && context.HttpContext.Items[OriginalStreamCacheKey] is Stream originalStream
+                    && context.HttpContext.Items.ContainsKey(OriginalStreamHttpContextItemsKey)
+                    && context.HttpContext.Items[OriginalStreamHttpContextItemsKey] is Stream originalStream
             )
             {
                 context.HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
