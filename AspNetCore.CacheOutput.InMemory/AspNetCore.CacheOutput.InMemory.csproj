@@ -10,8 +10,9 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
     <Description>InMemoryOutputCacheProvider for AspNetCore.CacheOutput package</Description>
-    <Version>3.0.0-pre2</Version>
+    <Version>3.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
@@ -32,7 +33,11 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.CacheOutput" Version="2.1.0" />
-    <PackageReference Include="AspNetCore.CacheOutput" Version="3.0.0-pre3" />
+    <PackageReference Include="AspNetCore.CacheOutput" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-AspNetCore.CacheOutput
-========================
+# AspNetCore.CacheOutput
 
 Strathweb.CacheOutput library (https://github.com/filipw/Strathweb.CacheOutput) redone to work with ASP.NET Core
 
@@ -16,8 +15,8 @@ a cache entry on any subsequent use when the cache entry becomes stale)
 Additionally, the library is setting ETags for you, and keeping them unchanged for the duration of the caching period.
 Caching by default can only be applied to GET actions.
 
-Installation
---------------------
+### Installation
+
 You can build from the source here, or you can install the Nuget version:
 
 1. Install core package: **Install-Package AspNetCore.CacheOutput**
@@ -42,8 +41,7 @@ You can build from the source here, or you can install the Nuget version:
      services.AddRedisCacheOutput(Configuration.GetConnectionString("<redis connection string name>"));
      ```
 
-Usage
---------------------
+### Usage
 
 ```csharp
 // Cache for 100 seconds on the server, inform the client that response is valid for 100 seconds
@@ -75,8 +73,8 @@ public string Get(int id)
 }
 ```
 
-Caching convention
---------------------
+### Caching convention
+
 In order to determine the expected content type of the response, **CacheOutput** will run Web APIs internal *content negotiation process*, based on the incoming request & the return type of the action on which caching is applied. 
 
 Each individual content type response is cached separately (so out of the box, you can expect the action to be cached as JSON and XML, if you introduce more formatters, those will be cached as well).
@@ -116,8 +114,8 @@ public HttpResponseMessage Get(int id)
 
 This will always return a response with `image/jpeg` as value for the `Content-Type` header.
 
-Ignoring caching
---------------------
+### Ignoring caching
+
 You can set up caching globally (add global caching filter) or on controller level (decorate the controller with the caching attribute). This means that caching settings will cascade down to all the actions in your entire application (in the first case) or in the controller (in the second case).
 
 You can still instruct a specific action to opt out from caching by using `[IgnoreCacheOutput]` attribute.
@@ -141,8 +139,8 @@ public class IgnoreController : Controller
 }
 ```
 
-Server side caching
---------------------
+### Server-side caching
+
 By default you can use AspNetCore.CacheOutput.InMemory cache provider to cache on the server side. However, you are free to swap this with anything else
 (static Dictionary, Memcached, Redis, whatever..) as long as you implement the following *IApiCacheOutput* interface (part of the distributed assembly).
 
@@ -172,8 +170,7 @@ You can register your implementation in "Startup" class "ConfigureServices" meth
 services.AddSingleton<IApiCacheOutput, MyCache>();
 ```
 
-Cache invalidation
---------------------
+### Cache invalidation
 
 Invalidation on action level - done through attributes. For example:
 
@@ -245,8 +242,7 @@ Please note that the `Forbiden()` `ActionResult` does not have a StatusCode caus
 merged into the `Response` until much later, the `Response.StatusCode` will be defaulted to 200 and cause the cache to be invalidated. Setting the `Response.StatusCode` 
 to 403 will cause it to behave as expected.
 
-Customizing the cache keys
---------------------------
+### Customizing the cache keys
 
 You can provide your own cache key generator. To do this, you need to implement the `ICacheKeyGenerator` interface. The default implementation should suffice in most situations.
 
@@ -277,8 +273,8 @@ Finding a matching cache key generator is done in this order:
 3. `DefaultCacheKeyGenerator`
 
 
-JSONP
---------------------
+### JSONP
+
 We automatically exclude *callback* parameter from cache key to allow for smooth JSONP support. 
 
 So:
@@ -291,8 +287,8 @@ is cached as:
 
 Position of the *callback* parameter does not matter.
 
-Etags
---------------------
+### Etags
+
 For client side caching, in addition to *MaxAge*, we will issue Etags. You can use the Etag value to make a request with *If-None-Match* header. If the resource is still valid, server will then response with a 304 status code.
 
 For example:
@@ -320,7 +316,6 @@ On the next request:
     Date: Fri, 25 Jan 2013 03:37:13 GMT
     Server: Microsoft-HTTPAPI/2.0
 
-License
---------------------
+### License
 
 Licensed under MIT. License included.
