@@ -70,5 +70,10 @@ namespace AspNetCore.CacheOutput.InMemory
                 }
             }
         }
+
+        public async Task ClearAll()
+        {
+            Cache.Compact(1.0);
+        }
     }
 }
