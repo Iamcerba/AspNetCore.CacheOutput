@@ -12,6 +12,11 @@ namespace AspNetCore.CacheOutput.InMemory
 
         protected readonly IMemoryCache cache;
 
+        public InMemoryCacheOutputProvider()
+        {
+            this.cache = new MemoryCache(new MemoryCacheOptions());
+        }
+
         public InMemoryCacheOutputProvider(IMemoryCache cache)
         {
             this.cache = cache;
