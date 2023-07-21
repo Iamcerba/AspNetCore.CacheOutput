@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

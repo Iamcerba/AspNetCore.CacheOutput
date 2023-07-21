@@ -12,7 +12,7 @@ namespace AspNetCore.CacheOutput.Redis
     {
         private const string WildcardCharacter = "*";
 
-        private readonly IDatabase redisCache;
+        protected readonly IDatabase redisCache;
 
         public StackExchangeRedisCacheOutputProvider(IDatabase redisCache)
         {

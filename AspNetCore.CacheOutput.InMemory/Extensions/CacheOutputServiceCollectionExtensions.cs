@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -25,6 +26,7 @@ namespace AspNetCore.CacheOutput.InMemory.Extensions
             services.TryAdd(ServiceDescriptor.Singleton<CacheKeyGeneratorFactory, CacheKeyGeneratorFactory>());
             services.TryAdd(ServiceDescriptor.Singleton<ICacheKeyGenerator, DefaultCacheKeyGenerator>());
             services.TryAdd(ServiceDescriptor.Singleton<IApiCacheOutput, InMemoryCacheOutputProvider>());
+            services.TryAdd(ServiceDescriptor.Transient<IMemoryCache>(e => new MemoryCache(new MemoryCacheOptions())));
 
             return services;
         }

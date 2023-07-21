@@ -8,8 +8,14 @@ namespace AspNetCore.CacheOutput.InMemory
 {
     public class InMemoryCacheOutputProvider : IApiCacheOutput
     {
-        private static readonly MemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
         private const string CancellationTokenKey = ":cts";
+
+        protected readonly IMemoryCache cache;
+
+        public InMemoryCacheOutputProvider(IMemoryCache cache)
+        {
+            this.cache = cache;
+        }
 
         public Task RemoveStartsWithAsync(string key)
         {
@@ -18,24 +24,24 @@ namespace AspNetCore.CacheOutput.InMemory
 
         public async Task<T> GetAsync<T>(string key) where T : class
         {
-            return Cache.Get(key) as T;
+            return cache.Get(key) as T;
         }
 
         public async Task RemoveAsync(string key)
         {
-            if (Cache.TryGetValue($"{key}{CancellationTokenKey}", out CancellationTokenSource cts))
+            if (cache.TryGetValue($"{key}{CancellationTokenKey}", out CancellationTokenSource cts))
             {
                 cts.Cancel();
             }
             else
             {
-                Cache.Remove(key);
+                cache.Remove(key);
             }
         }
 
         public async Task<bool> ContainsAsync(string key)
         {
-            return Cache.TryGetValue(key, out object result);
+            return cache.TryGetValue(key, out object result);
         }
 
         public async Task AddAsync(string key, object value, DateTimeOffset expiration, string dependsOnKey = null)
@@ -45,7 +51,7 @@ namespace AspNetCore.CacheOutput.InMemory
 
             if (string.IsNullOrEmpty(dependsOnKey))
             {
-                if (Cache.TryGetValue($"{key}{CancellationTokenKey}", out CancellationTokenSource existingCts))
+                if (cache.TryGetValue($"{key}{CancellationTokenKey}", out CancellationTokenSource existingCts))
                 {
                     options.AddExpirationToken(new CancellationChangeToken(existingCts.Token));
                 }
@@ -55,18 +61,18 @@ namespace AspNetCore.CacheOutput.InMemory
 
                     options.AddExpirationToken(new CancellationChangeToken(cts.Token));
 
-                    Cache.Set($"{key}{CancellationTokenKey}", cts, options);
+                    cache.Set($"{key}{CancellationTokenKey}", cts, options);
                 }
 
-                Cache.Set(key, value, options);
+                cache.Set(key, value, options);
             }
             else
             {
-                if (Cache.TryGetValue($"{dependsOnKey}{CancellationTokenKey}", out CancellationTokenSource existingCts))
+                if (cache.TryGetValue($"{dependsOnKey}{CancellationTokenKey}", out CancellationTokenSource existingCts))
                 {
                     options.AddExpirationToken(new CancellationChangeToken(existingCts.Token));
 
-                    Cache.Set(key, value, options);
+                    cache.Set(key, value, options);
                 }
             }
         }
