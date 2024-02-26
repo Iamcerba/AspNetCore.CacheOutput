@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0;</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net6.0;net7.0;net8.0;</TargetFrameworks>
     <Authors>Alexander Shabunevich</Authors>
     <Company />
     <Description>StackExchangeRedisOutputCacheProvider for AspNetCore.CacheOutput package</Description>
@@ -10,32 +10,41 @@
     <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
-    <Version>3.1.0</Version>
+    <Version>3.2.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
-    <PackageReference Include="Jil" Version="2.17.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="3.1.14" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework) == 'net6.0'">
-    <PackageReference Include="Jil" Version="2.17.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework) == 'net6.0'">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
+  
   <ItemGroup>
-	<PackageReference Include="AspNetCore.CacheOutput" Version="2.1.0" />
-	<PackageReference Include="AspNetCore.CacheOutput" Version="3.0.0" />
+    <PackageReference Include="Jil" Version="2.17.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="3.1.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'net6.0'">
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'net7.0'">
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'net8.0'">
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1' Or $(TargetFramework) == 'net6.0' Or $(TargetFramework) == 'net7.0' Or $(TargetFramework) == 'net8.0'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
+    <PackageReference Include="AspNetCore.CacheOutput" Version="2.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1' Or $(TargetFramework) == 'net6.0' Or $(TargetFramework) == 'net7.0' Or $(TargetFramework) == 'net8.0'">
+    <PackageReference Include="AspNetCore.CacheOutput" Version="3.*" />
   </ItemGroup>
 
   <ItemGroup>
