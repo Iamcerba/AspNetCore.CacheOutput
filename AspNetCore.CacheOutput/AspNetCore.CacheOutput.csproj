@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0;net7.0;net8.0;</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net6.0;net7.0;net8.0;net9.0;</TargetFrameworks>
     <AssemblyName>AspNetCore.CacheOutput</AssemblyName>
     <Company />
     <Authors>Alexander Shabunevich</Authors>
@@ -16,7 +16,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1' Or $(TargetFramework) == 'net6.0' Or $(TargetFramework) == 'net7.0' Or $(TargetFramework) == 'net8.0'">
+  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1' Or $(TargetFramework) == 'net6.0' Or $(TargetFramework) == 'net7.0' Or $(TargetFramework) == 'net8.0' Or $(TargetFramework) == 'net9.0'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
