@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "[.NET Core 3.1] AspNetCore.CacheOutput.Demo.InMemory",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory/bin/Debug/netcoreapp3.1/AspNetCore.CacheOutput.Demo.InMemory.dll",
+            "args": [
+                "-f",
+                "netcoreapp3.1"
+            ],
+            "cwd": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ]
+}
