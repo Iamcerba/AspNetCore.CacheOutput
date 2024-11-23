@@ -9,5 +9,4 @@
     <ProjectReference Include="..\AspNetCore.CacheOutput\AspNetCore.CacheOutput.csproj" />
   </ItemGroup>
 
-
 </Project>

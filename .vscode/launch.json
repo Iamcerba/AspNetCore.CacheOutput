@@ -7,10 +7,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory/bin/Debug/netcoreapp3.1/AspNetCore.CacheOutput.Demo.InMemory.dll",
-            "args": [
-                "-f",
-                "netcoreapp3.1"
-            ],
+            "args": [],
             "cwd": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
@@ -19,7 +16,27 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5001;https://localhost:5002"
+            }
+        },
+        {
+            "name": "[.NET 8.0] AspNetCore.CacheOutput.Demo.InMemory.NET80",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory.NET80/bin/Debug/net8.0/AspNetCore.CacheOutput.Demo.InMemory.NET80.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory.NET80",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5001;https://localhost:5002"
             }
         }
     ]
