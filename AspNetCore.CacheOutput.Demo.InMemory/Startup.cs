@@ -34,7 +34,7 @@ namespace AspNetCore.CacheOutput.Demo.InMemory
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

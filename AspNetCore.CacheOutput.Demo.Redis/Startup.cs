@@ -31,7 +31,7 @@ namespace AspNetCore.CacheOutput.Demo.Redis
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
