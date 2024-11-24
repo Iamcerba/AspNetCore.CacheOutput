@@ -1,4 +1,4 @@
-ARG VARIANT="9.0"
+ARG VARIANT="8.0"
 
 FROM --platform="linux/arm64" mcr.microsoft.com/devcontainers/dotnet:1-${VARIANT}
 
