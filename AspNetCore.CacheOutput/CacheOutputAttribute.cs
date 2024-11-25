@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -147,9 +147,9 @@ namespace AspNetCore.CacheOutput
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
             IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-            CacheKeyGeneratorFactory cacheKeyGeneratorFactory = 
+            CacheKeyGeneratorFactory cacheKeyGeneratorFactory =
                 serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
-            ICacheKeyGenerator cacheKeyGenerator = 
+            ICacheKeyGenerator cacheKeyGenerator =
                 cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
 
             EnsureCacheTimeQuery();
@@ -173,7 +173,7 @@ namespace AspNetCore.CacheOutput
 
             context.HttpContext.Items[SkipResultExecutionHttpContextItemsKey] = true;
 
-            var responseAdditionalDataJsonUtf8Bytes = 
+            var responseAdditionalDataJsonUtf8Bytes =
                 await cache.GetAsync<byte[]>(cacheKey + ResponseAdditionalDataCacheKeyPostfix);
 
             if (responseAdditionalDataJsonUtf8Bytes == null)
@@ -273,9 +273,9 @@ namespace AspNetCore.CacheOutput
             {
                 IServiceProvider serviceProvider = context.HttpContext.RequestServices;
                 IApiCacheOutput cache = serviceProvider.GetRequiredService(typeof(IApiCacheOutput)) as IApiCacheOutput;
-                CacheKeyGeneratorFactory cacheKeyGeneratorFactory = 
+                CacheKeyGeneratorFactory cacheKeyGeneratorFactory =
                     serviceProvider.GetRequiredService(typeof(CacheKeyGeneratorFactory)) as CacheKeyGeneratorFactory;
-                ICacheKeyGenerator cacheKeyGenerator = 
+                ICacheKeyGenerator cacheKeyGenerator =
                     cacheKeyGeneratorFactory.GetCacheKeyGenerator(this.CacheKeyGenerator);
 
                 string cacheKey = context.HttpContext.Items[CacheKeyHttpContextItemsKey] as string;
@@ -304,14 +304,15 @@ namespace AspNetCore.CacheOutput
                             await cache.AddAsync(baseKey, string.Empty, cacheTime.AbsoluteExpiration);
                             await cache.AddAsync(cacheKey, content, cacheTime.AbsoluteExpiration, baseKey);
 
-                            var responseAdditionalData = new ResponseAdditionalData() {
+                            var responseAdditionalData = new ResponseAdditionalData()
+                            {
                                 StatusCode = context.HttpContext.Response.StatusCode,
                                 ContentType = contentType,
                                 Etag = etag,
                                 LastModified = actionExecutionTimestamp
                             };
 
-                            byte[] responseAdditionalDataUtf8Bytes = 
+                            byte[] responseAdditionalDataUtf8Bytes =
                                 SerializeResponseAdditionalDataToJsonUtf8Bytes(responseAdditionalData);
 
                             await cache.AddAsync(
@@ -366,7 +367,7 @@ namespace AspNetCore.CacheOutput
             }
 
             IServiceProvider serviceProvider = context.HttpContext.RequestServices;
-            IOptions<MvcOptions> options = 
+            IOptions<MvcOptions> options =
                 serviceProvider.GetService(typeof(IOptions<MvcOptions>)) as IOptions<MvcOptions>;
 
             if (options != null)
@@ -424,11 +425,13 @@ namespace AspNetCore.CacheOutput
 
             string cacheControlHeader = cacheControl.ToString();
 
-            if (!string.IsNullOrEmpty(cacheControlHeader)) {
+            if (!string.IsNullOrEmpty(cacheControlHeader))
+            {
                 response.Headers[HeaderNames.CacheControl] = cacheControlHeader;
             }
 
-            if (NoCache) {
+            if (NoCache)
+            {
                 response.Headers[HeaderNames.Pragma] = "no-cache";
             }
 

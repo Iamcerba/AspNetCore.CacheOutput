@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 
 namespace AspNetCore.CacheOutput.Demo.InMemory.Exceptions
 {
     [Serializable]
-    public class BusinessException : Exception {
+    public class BusinessException : Exception
+    {
         public BusinessException()
         {
         }
