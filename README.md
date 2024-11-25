@@ -1,17 +1,17 @@
 # AspNetCore.CacheOutput
 
-Strathweb.CacheOutput library (https://github.com/filipw/Strathweb.CacheOutput) redone to work with ASP.NET Core
+Strathweb.CacheOutput library (https://github.com/filipw/Strathweb.CacheOutput) rewritten to work with ASP.NET Core.
 
 **CacheOutput** will take care of server side caching and set the appropriate client side (response) headers for you.
 
 You can specify the following properties:
- - *ClientTimeSpan* (corresponds to CacheControl MaxAge HTTP header)
- - *MustRevalidate* (corresponds to MustRevalidate HTTP header - indicates whether the origin server requires revalidation of 
-a cache entry on any subsequent use when the cache entry becomes stale)
- - *ExcludeQueryStringFromCacheKey* (do not vary cache by querystring values)
- - *ServerTimeSpan* (time how long the response should be cached on the server side)
- - *AnonymousOnly* (cache enabled only for requests when Thread.CurrentPrincipal is not set)
- 
+ - *ClientTimeSpan* (corresponds to CacheControl MaxAge HTTP header).
+ - *MustRevalidate* (corresponds to MustRevalidate HTTP header - indicates whether the origin server requires revalidation of
+a cache entry on any subsequent use when the cache entry becomes stale).
+ - *ExcludeQueryStringFromCacheKey* (do not vary cache by querystring values).
+ - *ServerTimeSpan* (time how long the response should be cached on the server side).
+ - *AnonymousOnly* (cache enabled only for requests when Thread.CurrentPrincipal is not set).
+
 Additionally, the library is setting ETags for you, and keeping them unchanged for the duration of the caching period.
 Caching by default can only be applied to GET actions.
 
@@ -30,13 +30,13 @@ You can build from the source here, or you can install the Nuget version:
 3. In "Startup" class "ConfigureServices" method depending on previosly installed cache provider register additional services:
 
    * For AspNetCore.CacheOutput.InMemory cache provider:
-   
+
      ```csharp
      services.AddInMemoryCacheOutput();
      ```
-   
+
    * For AspNetCore.CacheOutput.Redis cache provider:
-   
+
      ```csharp
      services.AddRedisCacheOutput(Configuration.GetConnectionString("<redis connection string name>"));
      ```
@@ -75,11 +75,11 @@ public string Get(int id)
 
 ### Caching convention
 
-In order to determine the expected content type of the response, **CacheOutput** will run Web APIs internal *content negotiation process*, based on the incoming request & the return type of the action on which caching is applied. 
+In order to determine the expected content type of the response, **CacheOutput** will run Web APIs internal *content negotiation process*, based on the incoming request & the return type of the action on which caching is applied.
 
 Each individual content type response is cached separately (so out of the box, you can expect the action to be cached as JSON and XML, if you introduce more formatters, those will be cached as well).
 
-**Important**: We use *action name* as part of the key. Therefore it is *necessary* that action names are unique inside the controller - that's the only way we can provide consistency. 
+**Important**: We use *action name* as part of the key. Therefore it is *necessary* that action names are unique inside the controller - that's the only way we can provide consistency.
 
 So you either should use unique method names inside a single controller, or (if you really want to keep them the same names when overloading) you need to use *ActionName* attribute to provide uniqeness for caching. Example:
 
@@ -107,7 +107,7 @@ public HttpResponseMessage Get(int id)
     var response = new HttpResponseMessage(HttpStatusCode.OK);
     response.Content = GetImage(id); // e.g. StreamContent, ByteArrayContent,...
     response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-    
+
     return response;
 }
 ```
@@ -239,7 +239,7 @@ public ActionResult Put(Team value)
 }
 ```
 Please note that the `Forbiden()` `ActionResult` does not have a StatusCode causing it to fall back to the Response.StatusCode usage. Since `ActionResult` values aren't
-merged into the `Response` until much later, the `Response.StatusCode` will be defaulted to 200 and cause the cache to be invalidated. Setting the `Response.StatusCode` 
+merged into the `Response` until much later, the `Response.StatusCode` will be defaulted to 200 and cause the cache to be invalidated. Setting the `Response.StatusCode`
 to 403 will cause it to behave as expected.
 
 ### Customizing the cache keys
@@ -270,12 +270,12 @@ Finding a matching cache key generator is done in this order:
 
 1. Checks if CacheKeyGenerator property set in current action CacheOutputAttribute.
 2. Default globally registered CacheKeyGenerator.
-3. `DefaultCacheKeyGenerator`
+3. `DefaultCacheKeyGenerator`.
 
 
 ### JSONP
 
-We automatically exclude *callback* parameter from cache key to allow for smooth JSONP support. 
+We automatically exclude *callback* parameter from cache key to allow for smooth JSONP support.
 
 So:
 
@@ -309,7 +309,7 @@ On the next request:
     GET /api/myresource
     Accept: application/json
     If-None-Match: "5c479911-97b9-4b78-ae3e-d09db420d5ba"
-    
+
     Status Code: 304
     Cache-Control: max-age=100
     Content-Length: 0
