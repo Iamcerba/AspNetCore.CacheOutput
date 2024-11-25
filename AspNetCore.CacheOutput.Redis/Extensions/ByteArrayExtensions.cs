@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.IO.Compression;
 
 namespace AspNetCore.CacheOutput.Redis.Extensions
@@ -6,7 +6,7 @@ namespace AspNetCore.CacheOutput.Redis.Extensions
     internal static class ByteArrayExtensions
     {
         internal static byte[] Compress(
-            this byte[] target, 
+            this byte[] target,
             CompressionLevel compressionLevel = CompressionLevel.Fastest
         )
         {

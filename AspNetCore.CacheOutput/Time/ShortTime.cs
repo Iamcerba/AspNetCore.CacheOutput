@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace AspNetCore.CacheOutput.Time
 {
@@ -40,8 +40,8 @@ namespace AspNetCore.CacheOutput.Time
                 ClientTimeSpan = clientTimeInSeconds.HasValue ?
                     (TimeSpan?)TimeSpan.FromSeconds(clientTimeInSeconds.Value) :
                     null,
-                SharedTimeSpan = sharedTimeInSecounds.HasValue ? 
-                    (TimeSpan?)TimeSpan.FromSeconds(sharedTimeInSecounds.Value) : 
+                SharedTimeSpan = sharedTimeInSecounds.HasValue ?
+                    (TimeSpan?)TimeSpan.FromSeconds(sharedTimeInSecounds.Value) :
                     null
             };
 

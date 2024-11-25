@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
@@ -35,7 +35,7 @@ namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
         [HttpPost("api/values")]
         [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValue))]
         [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
-        public void CreateValue([FromBody]string value)
+        public void CreateValue([FromBody] string value)
         {
         }
 
@@ -48,7 +48,7 @@ namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
             "id"
         )] // Invalidating just cache related to this document
         [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
-        public void UpdateValue(int id, [FromBody]string value)
+        public void UpdateValue(int id, [FromBody] string value)
         {
         }
 
