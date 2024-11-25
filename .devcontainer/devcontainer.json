@@ -25,13 +25,16 @@
     //		}
     // }
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "dotnet dev-certs https --trust && dotnet restore",
+    "postCreateCommand": "dotnet dev-certs https --trust",
     // Configure tool-specific properties.
     "customizations": {
         "vscode": {
             // Set *default* container specific settings.json values on container create.
             "settings": {
                 "debug.internalConsoleOptions": "neverOpen",
+                "editor.formatOnPaste": false,
+                "editor.formatOnSave": true,
+                "editor.formatOnType": false,
                 "editor.renderWhitespace": "none",
                 "editor.rulers": [
                     120
@@ -45,7 +48,8 @@
             "extensions": [
                 "ms-dotnettools.csdevkit",
                 "pkief.material-icon-theme",
-                "visualstudioexptteam.vscodeintellicode"
+                "visualstudioexptteam.vscodeintellicode",
+                "editorconfig.editorconfig"
             ]
         }
     },
