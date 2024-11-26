@@ -31,7 +31,9 @@
         "vscode": {
             // Set *default* container specific settings.json values on container create.
             "settings": {
+                "csharp.semanticHighlighting.enabled": true,
                 "debug.internalConsoleOptions": "neverOpen",
+                "editor.defaultFormatter": "EditorConfig.EditorConfig",
                 "editor.formatOnPaste": false,
                 "editor.formatOnSave": true,
                 "editor.formatOnType": false,
@@ -39,6 +41,7 @@
                 "editor.rulers": [
                     120
                 ],
+                "editor.semanticHighlighting.enabled": true,
                 "files.associations": {
                     "*.json": "jsonc"
                 },
