@@ -43,7 +43,7 @@
     <PackageReference Include="AspNetCore.CacheOutput" Version="2.*" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1' Or $(TargetFramework) == 'net6.0' Or $(TargetFramework) == 'net7.0' Or $(TargetFramework) == 'net8.0'">
+  <ItemGroup Condition="$(TargetFramework) == 'net6.0' Or $(TargetFramework) == 'net7.0' Or $(TargetFramework) == 'net8.0'">
     <PackageReference Include="AspNetCore.CacheOutput" Version="3.*" />
   </ItemGroup>
 
