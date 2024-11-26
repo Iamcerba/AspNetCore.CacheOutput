@@ -11,7 +11,7 @@ namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
+        private static readonly string[] summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
@@ -40,7 +40,7 @@ namespace AspNetCore.CacheOutput.Demo.InMemory.Controllers
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
+                Summary = summaries[rng.Next(summaries.Length)]
             })
             .ToArray();
         }
