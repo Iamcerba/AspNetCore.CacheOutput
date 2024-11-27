@@ -1,0 +1,17 @@
+{
+    "csharp.semanticHighlighting.enabled": true,
+    "debug.internalConsoleOptions": "neverOpen",
+    "editor.defaultFormatter": "EditorConfig.EditorConfig",
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false,
+    "editor.renderWhitespace": "none",
+    "editor.rulers": [
+        120
+    ],
+    "editor.semanticHighlighting.enabled": true,
+    "files.associations": {
+        "*.json": "jsonc"
+    },
+    "files.trimTrailingWhitespace": true
+}
