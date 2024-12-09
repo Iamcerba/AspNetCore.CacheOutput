@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0;net7.0;net8.0;</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;</TargetFrameworks>
     <Authors>Alexander Shabunevich</Authors>
     <Company />
     <Copyright>Copyright © 2018 Alexander Shabunevich</Copyright>
@@ -10,37 +10,25 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
     <Description>InMemoryOutputCacheProvider for AspNetCore.CacheOutput package</Description>
-    <Version>3.2.0</Version>
+    <Version>4.0.0-pre1</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.*" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework) == 'net6.0'">
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.*" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework) == 'net7.0'">
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.*" />
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'net8.0'">
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.*" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1' Or $(TargetFramework) == 'net6.0' Or $(TargetFramework) == 'net7.0' Or $(TargetFramework) == 'net8.0'">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  <ItemGroup Condition="$(TargetFramework) == 'net9.0'">
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.*" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
-    <PackageReference Include="AspNetCore.CacheOutput" Version="2.*" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(TargetFramework) == 'net6.0' Or $(TargetFramework) == 'net7.0' Or $(TargetFramework) == 'net8.0'">
-    <PackageReference Include="AspNetCore.CacheOutput" Version="3.*" />
+  <ItemGroup Condition="$(TargetFramework) == 'net8.0' Or $(TargetFramework) == 'net9.0'">
+    <PackageReference Include="AspNetCore.CacheOutput" Version="4.0.*-*" />
   </ItemGroup>
 
   <ItemGroup>
