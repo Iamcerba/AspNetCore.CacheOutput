@@ -6,13 +6,13 @@
         "dockerfile": "Dockerfile",
         "context": "..",
         "args": {
-            "VARIANT": "8.0"
+            "VARIANT": "9.0"
         }
     },
     "features": {
         "ghcr.io/devcontainers/features/dotnet:2": {
-            "version": "7.0",
-            "additionalVersions": "3.1, 6.0"
+            "version": "8.0",
+            "additionalVersions": "3.1, 6.0, 7.0"
         }
     },
     // Features to add to the dev container. More info: https://containers.dev/features.
