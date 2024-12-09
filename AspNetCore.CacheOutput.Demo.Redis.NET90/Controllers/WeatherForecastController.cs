@@ -29,7 +29,7 @@ namespace AspNetCore.CacheOutput.Demo.Redis.NET90.Controllers
             .ToArray();
         }
 
-        [HttpGet("api/values/{id}")]
+        [HttpGet("{id}")]
         [CacheOutput(
             ClientTimeSpan = 0,
             ServerTimeSpan = 3600,
@@ -41,14 +41,14 @@ namespace AspNetCore.CacheOutput.Demo.Redis.NET90.Controllers
             return "value";
         }
 
-        [HttpPost("api/values")]
+        [HttpPost("")]
         [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValue))]
         [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
         public void CreateValue([FromBody] string value)
         {
         }
 
-        [HttpPut("api/values/{id}")]
+        [HttpPut("{id}")]
         [CacheOutput.Redis.InvalidateCacheOutput(
             typeof(WeatherForecastController),
             nameof(GetValue),
