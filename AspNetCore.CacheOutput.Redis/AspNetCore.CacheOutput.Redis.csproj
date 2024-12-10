@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
-    <Version>4.0.0-pre1</Version>
+    <Version>4.0.0-pre2</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.*" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'net8.0' Or $(TargetFramework) == 'net9.0'">
+  <ItemGroup>
     <PackageReference Include="AspNetCore.CacheOutput" Version="4.0.*-*" />
   </ItemGroup>
 
