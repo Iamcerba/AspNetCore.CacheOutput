@@ -1,25 +1,35 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
+namespace AspNetCore.CacheOutput.Demo.Redis.NET90.Controllers
 {
-    public class ValuesController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class WeatherForecastController : ControllerBase
     {
-        // GET api/values
-        [HttpGet("api/values")]
+        private static readonly string[] Summaries = new[]
+        {
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
+
+        [HttpGet(Name = "GetWeatherForecast")]
         [CacheOutput(
             ClientTimeSpan = 0,
             ServerTimeSpan = 3600,
             MustRevalidate = true,
             ExcludeQueryStringFromCacheKey = false
         )]
-        public IEnumerable<string> GetValues()
+        public IEnumerable<WeatherForecast> GetValues()
         {
-            return new string[] { "value1", "value2" };
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            })
+            .ToArray();
         }
 
-        // GET api/values/5
-        [HttpGet("api/values/{id}")]
+        [HttpGet("{id}")]
         [CacheOutput(
             ClientTimeSpan = 0,
             ServerTimeSpan = 3600,
@@ -31,37 +41,22 @@ namespace AspNetCore.CacheOutput.Demo.Redis.Controllers
             return "value";
         }
 
-        // POST api/values
-        [HttpPost("api/values")]
+        [HttpPost("")]
         [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValue))]
         [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
         public void CreateValue([FromBody] string value)
         {
         }
 
-        // PUT api/values/5
-        [HttpPut("api/values/{id}")]
+        [HttpPut("{id}")]
         [CacheOutput.Redis.InvalidateCacheOutput(
-            typeof(ValuesController),
+            typeof(WeatherForecastController),
             nameof(GetValue),
             null,
             "id"
         )] // Invalidating just cache related to this document
         [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
         public void UpdateValue(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("api/values/{id}")]
-        [CacheOutput.Redis.InvalidateCacheOutput(
-            typeof(ValuesController),
-            nameof(GetValue),
-            null,
-            "id"
-        )] // Invalidating just cache related to this document
-        [CacheOutput.Redis.InvalidateCacheOutput(nameof(GetValues))]
-        public void DeleteValue(int id)
         {
         }
     }

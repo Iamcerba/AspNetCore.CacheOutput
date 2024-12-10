@@ -2,44 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "[.NET Core 3.1] AspNetCore.CacheOutput.Demo.InMemory",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory/bin/Debug/netcoreapp3.1/AspNetCore.CacheOutput.Demo.InMemory.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory",
-            "stopAtEntry": false,
-            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "http://localhost:5001;https://localhost:5002"
-            }
-        },
-        {
-            "name": "[.NET Core 3.1] AspNetCore.CacheOutput.Demo.Redis",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.Redis/bin/Debug/netcoreapp3.1/AspNetCore.CacheOutput.Demo.Redis.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.Redis",
-            "stopAtEntry": false,
-            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "http://localhost:5001;https://localhost:5002"
-            }
-        },
-        {
             "name": "[.NET 8.0] AspNetCore.CacheOutput.Demo.InMemory.NET80",
             "type": "coreclr",
             "request": "launch",
@@ -47,6 +9,25 @@
             "program": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory.NET80/bin/Debug/net8.0/AspNetCore.CacheOutput.Demo.InMemory.NET80.dll",
             "args": [],
             "cwd": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.InMemory.NET80",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5001;https://localhost:5002"
+            }
+        },
+        {
+            "name": "[.NET 9.0] AspNetCore.CacheOutput.Demo.Redis.NET90",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.Redis.NET90/bin/Debug/net9.0/AspNetCore.CacheOutput.Demo.Redis.NET90.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/AspNetCore.CacheOutput.Demo.Redis.NET90",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {

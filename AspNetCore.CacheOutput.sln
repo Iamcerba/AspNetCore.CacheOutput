@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29728.190
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}"
 EndProject
@@ -11,11 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.InMe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Redis", "AspNetCore.CacheOutput.Redis\AspNetCore.CacheOutput.Redis.csproj", "{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Demo.Redis", "AspNetCore.CacheOutput.Demo.Redis\AspNetCore.CacheOutput.Demo.Redis.csproj", "{0A97227F-B11D-4612-8704-7B3A99864548}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.CacheOutput.Demo.InMemory", "AspNetCore.CacheOutput.Demo.InMemory\AspNetCore.CacheOutput.Demo.InMemory.csproj", "{56B0CBF5-411B-410F-AEC7-07EFFA0493EA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.CacheOutput.Demo.InMemory.NET80", "AspNetCore.CacheOutput.Demo.InMemory.NET80\AspNetCore.CacheOutput.Demo.InMemory.NET80.csproj", "{97ADE841-2950-4C4F-B520-77D0DFE618EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.CacheOutput.Demo.Redis.NET90", "AspNetCore.CacheOutput.Demo.Redis.NET90\AspNetCore.CacheOutput.Demo.Redis.NET90.csproj", "{0BDBB102-D45F-419F-B4A8-54D4D76B9541}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,26 +33,21 @@ Global
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23AB80FC-4CE1-46C4-BCC9-ED23DCD1D9BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A97227F-B11D-4612-8704-7B3A99864548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A97227F-B11D-4612-8704-7B3A99864548}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A97227F-B11D-4612-8704-7B3A99864548}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A97227F-B11D-4612-8704-7B3A99864548}.Release|Any CPU.Build.0 = Release|Any CPU
-		{56B0CBF5-411B-410F-AEC7-07EFFA0493EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{56B0CBF5-411B-410F-AEC7-07EFFA0493EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{56B0CBF5-411B-410F-AEC7-07EFFA0493EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{56B0CBF5-411B-410F-AEC7-07EFFA0493EA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97ADE841-2950-4C4F-B520-77D0DFE618EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{97ADE841-2950-4C4F-B520-77D0DFE618EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97ADE841-2950-4C4F-B520-77D0DFE618EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97ADE841-2950-4C4F-B520-77D0DFE618EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BDBB102-D45F-419F-B4A8-54D4D76B9541}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BDBB102-D45F-419F-B4A8-54D4D76B9541}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BDBB102-D45F-419F-B4A8-54D4D76B9541}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BDBB102-D45F-419F-B4A8-54D4D76B9541}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0A97227F-B11D-4612-8704-7B3A99864548} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
-		{56B0CBF5-411B-410F-AEC7-07EFFA0493EA} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
 		{97ADE841-2950-4C4F-B520-77D0DFE618EF} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
+		{0BDBB102-D45F-419F-B4A8-54D4D76B9541} = {149E8FD3-7BC6-4DD5-B3A2-BE28A577FAEF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {95A67687-6D38-4245-B703-207EE0FA5F32}
