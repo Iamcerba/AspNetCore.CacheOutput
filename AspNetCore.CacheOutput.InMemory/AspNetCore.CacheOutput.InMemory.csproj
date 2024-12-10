@@ -10,7 +10,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
     <Description>InMemoryOutputCacheProvider for AspNetCore.CacheOutput package</Description>
-    <Version>4.0.0-pre2</Version>
+    <Version>4.0.0-pre3</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
