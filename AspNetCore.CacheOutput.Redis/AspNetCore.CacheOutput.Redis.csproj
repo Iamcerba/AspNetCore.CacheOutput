@@ -10,10 +10,14 @@
     <RepositoryUrl>https://github.com/Iamcerba/AspNetCore.CacheOutput</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, core, netcore, cacheoutput, cacheprovider</PackageTags>
-    <Version>4.0.0-pre2</Version>
+    <Version>4.0.0-pre3</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'net8.0'">
+    <PackageReference Include="Jil" Version="2.17.*" />
+  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
